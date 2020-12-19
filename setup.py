@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
- 
+
 setup(name='graphing',
       version='0.0.0',
       url='https://github.com/ryu577/graphing',
