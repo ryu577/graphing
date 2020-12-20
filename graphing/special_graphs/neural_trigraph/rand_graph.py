@@ -29,3 +29,4 @@ if __name__=="__main__":
     print(be)
     tri = neur_trig_edges(5,4,8)
     print(tri)
+
