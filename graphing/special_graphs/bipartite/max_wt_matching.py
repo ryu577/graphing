@@ -55,7 +55,7 @@ class Graph():
         self.max_ver_ix = max(self.r_verts)
 
 
-def find_matching(graph):
+def find_max_matchings(graph):
     ## Start with an empty matching.
     m = Matching([],[],graph)
     while True:
@@ -94,4 +94,4 @@ if __name__=="__main__":
             [2,6],
             [2,7]]
     wts = [.4,.4,.1,.33,.33,.33]
-
+    gr = Graph(edges,wts)
