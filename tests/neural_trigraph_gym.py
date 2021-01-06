@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 
 if __name__=="__main__":
     diffs = []
-    for i in range(10000):
+    for i in range(50000):
         #edges1, edges2 = neur_trig_edges(70,100,100)
-        edges1, edges2 = neur_trig_edges(3,4,3,shuffle_p=.05)
+        edges1, edges2 = neur_trig_edges(4,5,4,shuffle_p=.05)
         paths1 = min_cover_trigraph(edges1,edges2)
         paths2 = min_cover_trigraph_heuristic1(edges1,edges2)
         print("optimal has: " + str(len(paths1)) + " paths")
@@ -18,7 +18,7 @@ if __name__=="__main__":
         #print(paths2)
         print("###################")
         diffs.append(len(paths2)-len(paths1))
-        if len(paths2)!=len(paths1):
+        if len(paths2)!=len(paths1):# or len(paths1)==5:
             print(edges1)
             print("##########")
             print(edges2)
