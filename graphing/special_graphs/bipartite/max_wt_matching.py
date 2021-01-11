@@ -13,7 +13,8 @@ class Matching():
         self.mtch={}
         self.wt = 0
         for i in range(len(edges)):
-            self.mtch[edges[i]] = wts[i]
+            ed = edges[i]
+            self.mtch[(ed[0],ed[1])] = wts[i]
             self.wt += wts[i]
         self.l_verts_covered = set()
         self.r_verts_covered = set()
@@ -23,6 +24,7 @@ class Matching():
         self.l_verts_not_covered = gr.l_verts - self.l_verts_covered
         self.r_verts_not_covered = gr.r_verts - self.r_verts_covered
 
+    
     def add_edge(self,ed,wt):
         if ed[0] in self.l_verts_covered:
             raise Exception("The left vertex has been seen.\
@@ -40,7 +42,9 @@ class Matching():
 
 class Graph():
     def __init__(self,edges,wts):
-        self.set_edges = set(edges)
+        self.set_edges = set()
+        for ed in edges:
+            self.set_edges.add((ed[0],ed[1]))
         self.edges = edges
         self.wts = wts
         self.verts = set()
@@ -48,7 +52,8 @@ class Graph():
         self.r_verts = set()
         self.edge_dict = {}
         for ix in range(len(edges)):
-            self.edge_dict[edges[ix]] = wts[ix]
+            ed = edges[ix]
+            self.edge_dict[(ed[0],ed[1])] = wts[ix]
         for e in edges:
             self.l_verts.add(e[0])
             self.r_verts.add(e[1])
@@ -62,7 +67,8 @@ def find_max_matchings(graph):
     while True:
         g = nx.DiGraph()
         for ix in range(len(graph.edges)):
-            ed = graph.edges[ix]
+            edge = graph.edges[ix]
+            ed = (edge[0],edge[1])
             if ed in m.mtch:
                 g.add_edge(ed[1],ed[0],weight=graph.wts[ix])
             else:
@@ -73,20 +79,20 @@ def find_max_matchings(graph):
             g.add_edge(0,ver,weight=0)
         for ver in w_m:
             g.add_edge(ver,graph.max_ver_ix+1,weight=0)
-        pth = nx.shortest_path(g,source=0,\
+        try:
+            pth = nx.shortest_path(g,source=0,\
                 target=graph.max_ver_ix+1,weight='weight',\
                     method='bellman-ford')
-        ## If no path is found we can exit the loop.
-        if len(u_m)==0 or len(w_m)==0:
+        except:
             return ms
-        else:
-            p_edges = set()
-            for ix in range(len(pth)-1):
-                p_edges.add((pth[ix],pth[ix+1]))
-            nu_edges = p_edges.symmetric_difference(graph.set_edges)
-            nu_wts = [graph.edge_dict[ed] for ed in nu_edges]
-            m = Matching(nu_edges,nu_wts,graph)
-            ms.append(m)
+        p_edges = set()
+        for ix in range(1,len(pth)-2):
+            p_edges.add((pth[ix],pth[ix+1]))
+        nu_edges = p_edges.symmetric_difference(m.mtch)
+        nu_edges = [ed for ed in nu_edges]
+        nu_wts = [graph.edge_dict[ed] for ed in nu_edges]
+        m = Matching(nu_edges,nu_wts,graph)
+        ms.append(m)
 
 
 if __name__=="__main__":
@@ -96,7 +102,9 @@ if __name__=="__main__":
             [2,5],
             [2,6],
             [2,7]]
-    wts = [.4,.4,.1,.33,.33,.33]
+    wts = [.4,.41,.1,.34,.33,.33]
     gr = Graph(edges,wts)
-    ms = find_max_matchings(gr)
+    mtch = find_max_matchings(gr)
+    ## The matching of largest size.
+    print(mtch[len(mtch)-1].mtch)
 
