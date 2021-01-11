@@ -58,6 +58,7 @@ class Graph():
 def find_max_matchings(graph):
     ## Start with an empty matching.
     m = Matching([],[],graph)
+    ms = []
     while True:
         g = nx.DiGraph()
         for ix in range(len(graph.edges)):
@@ -76,8 +77,8 @@ def find_max_matchings(graph):
                 target=graph.max_ver_ix+1,weight='weight',\
                     method='bellman-ford')
         ## If no path is found we can exit the loop.
-        if len(pth)==0:
-            break
+        if len(u_m)==0 or len(w_m)==0:
+            return ms
         else:
             p_edges = set()
             for ix in range(len(pth)-1):
@@ -85,6 +86,8 @@ def find_max_matchings(graph):
             nu_edges = p_edges.symmetric_difference(graph.set_edges)
             nu_wts = [graph.edge_dict[ed] for ed in nu_edges]
             m = Matching(nu_edges,nu_wts,graph)
+            ms.append(m)
+
 
 if __name__=="__main__":
     edges=[[1,3],
@@ -95,3 +98,5 @@ if __name__=="__main__":
             [2,7]]
     wts = [.4,.4,.1,.33,.33,.33]
     gr = Graph(edges,wts)
+    ms = find_max_matchings(gr)
+
