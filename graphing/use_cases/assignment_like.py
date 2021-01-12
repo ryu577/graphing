@@ -1,8 +1,9 @@
 import numpy as np
 import networkx as nx
 from networkx.algorithms.flow import maximum_flow
-from algorith.graphs.trigraph import NeuralTriGraphCentralVert, min_cover_trigraph_edge_covers_heuristic
-from algorith.graphs.graph_utils import create_graph
+from graphing.special_graphs.neural_trigraph.central_vert import NeuralTriGraphCentralVert
+from graphing.special_graphs.neural_trigraph.path_cover import min_cover_trigraph_edge_covers_heuristic
+from graphing.graph_utils import create_graph
 
 
 def create_bipartite_graph(edges,l_caps,r_caps):
