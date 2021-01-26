@@ -1,6 +1,7 @@
 import numpy as np
 from graphing.special_graphs.bipartite.max_wt_matching import Graph, find_max_matchings
 
+##Whiteboard: https://wbd.ms/share/v2/aHR0cHM6Ly93aGl0ZWJvYXJkLm1pY3Jvc29mdC5jb20vYXBpL3YxLjAvd2hpdGVib2FyZHMvcmVkZWVtL2VhZmIzODYyMTMxZTRlZmQ5YWY4ZjIyMWIyZGI0MGU0X0JCQTcxNzYyLTEyRTAtNDJFMS1CMzI0LTVCMTMxRjQyNEUzRA==
 
 class MinWtEdgeCover():
     def __init__(self,gr):
