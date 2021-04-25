@@ -10,7 +10,5 @@ from graphing.special_graphs.neural_trigraph.path_cover \
 def tst():
     edges1 = np.array([[1,4],[2,4],[2,5],[3,5]])
     edges2 = np.array([[4,6],[4,7],[5,8]])
-
     paths1 = min_cover_trigraph(edges1,edges2)
-
 
