@@ -3,18 +3,17 @@ Implements the Hungarian method algo defined
 in section 17.2 of Schrijver.
 """
 import networkx as nx
-import numpy as np
 
 
-## How do we express a matching? Its a set of edges.
+# How do we express a matching? Its a set of edges.
 class Matching():
-    def __init__(self,edges,wts,gr):
-        self.graph=gr
-        self.mtch={}
+    def __init__(self, edges, wts, gr):
+        self.graph = gr
+        self.mtch = {}
         self.wt = 0
         for i in range(len(edges)):
             ed = edges[i]
-            self.mtch[(ed[0],ed[1])] = wts[i]
+            self.mtch[(ed[0], ed[1])] = wts[i]
             self.wt += wts[i]
         self.l_verts_covered = set()
         self.r_verts_covered = set()
@@ -24,8 +23,7 @@ class Matching():
         self.l_verts_not_covered = gr.l_verts - self.l_verts_covered
         self.r_verts_not_covered = gr.r_verts - self.r_verts_covered
 
-    
-    def add_edge(self,ed,wt):
+    def add_edge(self, ed, wt):
         if ed[0] in self.l_verts_covered:
             raise Exception("The left vertex has been seen.\
                     This isn't a valid addition to a matching.")
@@ -36,24 +34,24 @@ class Matching():
         self.r_verts_covered.add(ed[1])
         self.graph.l_verts.add(ed[0])
         self.graph.r_verts.add(ed[1])
-        self.l_verts_not_covered-=self.l_verts_covered
-        self.r_verts_not_covered-=self.r_verts_covered
+        self.l_verts_not_covered -= self.l_verts_covered
+        self.r_verts_not_covered -= self.r_verts_covered
 
 
 class Graph():
-    def __init__(self,edges,wts):
+    def __init__(self, edges, wts):
         self.set_edges = set()
         for ed in edges:
-            self.set_edges.add((ed[0],ed[1]))
+            self.set_edges.add((ed[0], ed[1]))
         self.edges = edges
         self.wts = wts
         self.verts = set()
-        self.l_verts= set()
+        self.l_verts = set()
         self.r_verts = set()
         self.edge_dict = {}
         for ix in range(len(edges)):
             ed = edges[ix]
-            self.edge_dict[(ed[0],ed[1])] = wts[ix]
+            self.edge_dict[(ed[0], ed[1])] = wts[ix]
         for e in edges:
             self.l_verts.add(e[0])
             self.r_verts.add(e[1])
@@ -68,7 +66,7 @@ def find_max_matchings(graph):
         g = nx.DiGraph()
         for ix in range(len(graph.edges)):
             edge = graph.edges[ix]
-            ed = (edge[0],edge[1])
+            ed = (edge[0], edge[1])
             if ed in m.mtch:
                 g.add_edge(ed[1],ed[0],weight=graph.wts[ix])
             else:
@@ -86,25 +84,24 @@ def find_max_matchings(graph):
         except:
             return ms
         p_edges = set()
-        for ix in range(1,len(pth)-2):
-            p_edges.add((pth[ix],pth[ix+1]))
+        for ix in range(1, len(pth)-2):
+            p_edges.add((pth[ix], pth[ix+1]))
         nu_edges = p_edges.symmetric_difference(m.mtch)
         nu_edges = [ed for ed in nu_edges]
         nu_wts = [graph.edge_dict[ed] for ed in nu_edges]
-        m = Matching(nu_edges,nu_wts,graph)
+        m = Matching(nu_edges, nu_wts, graph)
         ms.append(m)
 
 
-if __name__=="__main__":
-    edges=[[1,3],
-            [1,4],
-            [2,4],
-            [2,5],
-            [2,6],
-            [2,7]]
-    wts = [.4,.41,.1,.34,.33,.33]
+if __name__ == "__main__":
+    edges=[[1, 3],
+            [1, 4],
+            [2, 4],
+            [2, 5],
+            [2, 6],
+            [2, 7]]
+    wts = [.4, .41, .1, .34, .33, .33]
     gr = Graph(edges,wts)
     mtch = find_max_matchings(gr)
     ## The matching of largest size.
     print(mtch[len(mtch)-1].mtch)
-
