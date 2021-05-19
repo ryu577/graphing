@@ -1,5 +1,3 @@
-import numpy as np
-import networkx as nx
 from graphing.special_graphs.neural_trigraph.path_cover \
             import min_cover_trigraph, min_cover_trigraph_heuristic1
 from graphing.special_graphs.neural_trigraph.rand_graph import *
@@ -9,17 +7,17 @@ import matplotlib.pyplot as plt
 if __name__ == "__main__":
     diffs = []
     for i in range(50000):
-        #edges1, edges2 = neur_trig_edges(70,100,100)
-        edges1, edges2 = neur_trig_edges(7,3,7,shuffle_p=.05)
-        paths1 = min_cover_trigraph(edges1,edges2)
-        paths2 = min_cover_trigraph_heuristic1(edges1,edges2)
+        # edges1, edges2 = neur_trig_edges(70,100,100)
+        edges1, edges2 = neur_trig_edges(7, 3, 7, shuffle_p=.05)
+        paths1 = min_cover_trigraph(edges1, edges2)
+        paths2 = min_cover_trigraph_heuristic1(edges1, edges2)
         print("optimal has: " + str(len(paths1)) + " paths")
-        #print(paths1)
+        # print(paths1)
         print("heuristic has: " + str(len(paths2)) + " paths")
-        #print(paths2)
+        # print(paths2)
         print("###################")
         diffs.append(len(paths2)-len(paths1))
-        if len(paths2)!=len(paths1):# or len(paths1)==5:
+        if len(paths2) != len(paths1):  # or len(paths1)==5:
             print(edges1)
             print("##########")
             print(edges2)

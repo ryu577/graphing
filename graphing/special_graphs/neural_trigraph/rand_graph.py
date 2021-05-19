@@ -65,6 +65,7 @@ def rep_graph(l_size=7, mid_size=5, r_size=7, reps=42):
         else:
             edges1_fin = np.concatenate((edges1_fin, np.copy(edges1)))
             edges2_fin = np.concatenate((edges2_fin, np.copy(edges2)))
+    return edges1_fin, edges2_fin
 
 
 if __name__ == "__main__":

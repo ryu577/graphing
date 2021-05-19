@@ -1,5 +1,7 @@
-from graphing.special_graphs.neural_trigraph.central_vert import NeuralTriGraphCentralVert
-from graphing.special_graphs.neural_trigraph.neural_trigraph import NeuralTriGraph
+from graphing.special_graphs.neural_trigraph.central_vert\
+    import NeuralTriGraphCentralVert
+from graphing.special_graphs.neural_trigraph.neural_trigraph\
+    import NeuralTriGraph
 from graphing.graph_utils import min_edge_cover
 import networkx as nx
 import numpy as np
@@ -14,36 +16,48 @@ def min_cover_trigraph(edges1,edges2):
     return paths
     #return complete_paths(paths,edges1,edges2)
 
+
 def complete_paths(paths, edges1, edges2):
-    l_verts = max(edges1[:,0])
-    r_verts = max(edges2[:,0])
-    c_verts = max(edges1[:,1])
-    comp_paths=[]
+    l_verts = max(edges1[:, 0])
+    c_verts = max(edges1[:, 1])
+    comp_paths = []
     for pt in paths:
-        if len(pt)==3:
+        if len(pt) == 3:
             comp_paths.append(pt)
-        elif len(pt)==2:
-            l_layer = 1 if pt[0]<l_verts else (2 if pt[0]<r_verts else 3)
-            r_layer = 1 if pt[1]<l_verts else (2 if pt[1]<r_verts else 3)
+        elif len(pt) == 2:
+            l_layer = 1 if pt[0]<=l_verts else (2 if pt[0]<=c_verts else 3)
+            r_layer = 1 if pt[1]<=l_verts else (2 if pt[1]<=c_verts else 3)
             if l_layer==1 and r_layer==2:
                 third = edges2[edges2[:,0]==pt[1]][0][1]
-                paths.append([pt[0],pt[1],third])
+                comp_paths.append([pt[0],pt[1],third])
             elif l_layer==2 and r_layer==3:
                 first = edges1[edges1[:,1]==pt[0]][0][0]
-                paths.append([first,pt[0],pt[1]])
+                comp_paths.append([first,pt[0],pt[1]])
             elif l_layer==1 and r_layer==3:
                 l_cand = edges1[edges1[:,0]==pt[0]][:,1]
                 r_cand = edges2[edges2[:,1]==pt[1]][:,0]
                 candidts = [val for val in l_cand if val in r_cand]
-                paths.append([pt[0],candidts[0],pt[1]])
+                comp_paths.append([pt[0],candidts[0],pt[1]])
         else:
-            raise Exception("Length of path has become one. Need to code this up")
+            layer = 1 if pt[0] <= l_verts else (2 if pt[0] <= c_verts else 3)
+            if layer == 1:
+                c_cand = edges1[edges1[:, 0] == pt[0]][0][1]
+                r_cand = edges2[edges2[:, 0] == c_cand][0][1]
+                comp_paths.append([pt[0], c_cand, r_cand])
+            elif layer == 2:
+                l_cand = edges1[edges1[:, 1] == pt[0]][0][0]
+                r_cand = edges2[edges2[:, 1] == pt[0]][0][1]
+                comp_paths.append([l_cand, pt[0], r_cand])
+            else:
+                c_cand = edges2[edges2[:, 1] == pt[0]][0][0]
+                l_cand = edges1[edges1[:, 1] == c_cand][0][0]
+                comp_paths.append([l_cand, c_cand, pt[0]])
     return comp_paths
 
 
-def edge_cover_heuristic_vert_set(edges1,edges2):
-    c1=min_edge_cover(edges1)
-    c2=min_edge_cover(edges2)
+def edge_cover_heuristic_vert_set(edges1, edges2):
+    c1 = min_edge_cover(edges1)
+    c2 = min_edge_cover(edges2)
     vert_set = {}
     for e in c1:
         if e[1] not in vert_set:
@@ -67,20 +81,21 @@ def vert_set_to_paths(vert_set):
     for k in vert_set.keys():
         l_edges = vert_set[k].l_edges
         r_edges = vert_set[k].r_edges
-        n = max(len(l_edges),len(r_edges))
+        n = max(len(l_edges), len(r_edges))
         for i in range(n):
-            l_ver = l_edges[i%len(l_edges)]
-            r_ver = r_edges[i%len(r_edges)]
-            dat.append([l_ver,k,r_ver])
+            l_ver = l_edges[i % len(l_edges)]
+            r_ver = r_edges[i % len(r_edges)]
+            dat.append([l_ver, k, r_ver])
     return dat
 
 
-def min_cover_trigraph_heuristic1(edges1,edges2):
-    v_set = edge_cover_heuristic_vert_set(edges1,edges2)
+def min_cover_trigraph_heuristic1(edges1, edges2):
+    v_set = edge_cover_heuristic_vert_set(edges1, edges2)
     return vert_set_to_paths(v_set)
 
+
 def min_cover_trigraph_edge_covers_heuristic(edges1, edges2):
-    return edge_cover_heuristic_vert_set(edges1,edges2)
+    return edge_cover_heuristic_vert_set(edges1, edges2)
 
 
 def obtain_paths(self):
