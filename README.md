@@ -12,4 +12,5 @@ Then, try to run the following sample code:
 > edges1, edges2 = neur_trig_edges(7, 3, 7, shuffle_p=.05)
 > ## Find the full-path cover for this neural trigraph.
 > paths1 = min_cover_trigraph(edges1, edges2)
+> 
 > print(paths1)
