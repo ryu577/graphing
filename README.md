@@ -1,4 +1,4 @@
-# graph
+# graphing
 
 To install the library on your local machine, clone it and run from the base directory:
 
