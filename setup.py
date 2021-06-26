@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='graphing',
-      version='0.0.0',
+      version='0.0.3',
       url='https://github.com/ryu577/graphing',
       license='MIT',
       author='Rohit Pandey',
@@ -10,4 +10,3 @@ setup(name='graphing',
       packages=find_packages(exclude=['tests']),
       long_description=open('README.md').read(),
       zip_safe=False)
-
