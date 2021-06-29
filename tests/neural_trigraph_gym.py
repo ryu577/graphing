@@ -1,5 +1,7 @@
+import numpy as np
+import networkx as nx
 from graphing.special_graphs.neural_trigraph.path_cover \
-            import min_cover_trigraph, min_cover_trigraph_heuristic1
+    import min_cover_trigraph, min_cover_trigraph_heuristic1
 from graphing.special_graphs.neural_trigraph.rand_graph import *
 import matplotlib.pyplot as plt
 
