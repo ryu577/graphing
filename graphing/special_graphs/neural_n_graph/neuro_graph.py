@@ -3,7 +3,9 @@ from networkx.algorithms import bipartite
 from graphing.special_graphs.neural_trigraph.path_cover \
             import min_cover_trigraph, min_cover_trigraph_heuristic1
 from graphing.special_graphs.neural_trigraph.rand_graph import *
+#from graphing.special_graphs.directed_graph.transitive_closure import transitive_closure
 import random
+# import pickle
 
 
 def transitive_closure(g):
@@ -53,7 +55,6 @@ def transitive_closure_helper(g, trans_path, v):
         u_dict = recur[u]
         for node in u_dict:
             if node not in v_dict:
-                #this is O(n), I will fix this later
                 v_dict[node] = [v] + u_dict[node]
         v_dict[u] = [v, u]
     trans_path[v] = v_dict
@@ -218,7 +219,7 @@ def graph_converter(edges1, edges2):
     return g
 
 
-def check_path_cover(g, paths):
+def check_path_cover(g, paths, parent):
     '''
     check if the generated paths have covered all vertices, and if the paths
     are valid paths
@@ -226,7 +227,6 @@ def check_path_cover(g, paths):
         g (adjacent list), DAG
         paths (list of list), the result we obtained
     '''
-    parent = parent_dict(g)
     ret_vertices = set()
     for path in paths:
         for v in path:
@@ -249,33 +249,21 @@ def check_path_cover(g, paths):
 if __name__ == "__main__":
     # test case 1
     g1 = {1: [4], 2: [4, 5], 3: [5], 4: [6, 7], 5: [8], 6: [], 7: [], 8: []}
-    paths = min_path_cover(g1)
-    check_path_cover(g1, paths)
-    assert len(paths) == 3, ("Number of paths incorrect. Correct number" +
-                             "of paths is 3, and returned number of path is " + str(len(paths)))
+    # paths = min_path_cover(g1)
 
     # test case 2
     g2 = {1: [4], 2: [4, 5], 3: [5], 4: [6], 5: [6], 6: []}
-    paths = min_path_cover(g2)
-    check_path_cover(g2, paths)
-    assert len(paths) == 3, ("Number of paths incorrect. Correct number" +
-                             "of paths is 3, and returned number of path is " + str(len(paths)))
+    # paths = min_path_cover(g2)
 
     # test case 3
     g3 = {1: [4], 2: [5], 3: [6, 7], 4: [8], 5: [8, 9, 10], 6: [10], 7: [9],
           8: [11, 12], 9: [12], 10: [12, 13], 11: [], 12: [], 13: []}
-    paths = min_path_cover(g3)
-    check_path_cover(g3, paths)
-    assert len(paths) == 4, ("Number of paths incorrect. Correct number" +
-                             "of paths is 4, and returned number of path is " + str(len(paths)))
+    # paths = min_path_cover(g3)
 
     # test case 4
     g4 = {1: [4], 2: [5], 3: [6, 7], 4: [8], 5: [8], 6: [8, 9], 7: [10], 
           8: [11], 9: [11], 10: [12, 13, 14], 11: [], 12: [], 13: [], 14: []}
-    paths = min_path_cover(g4)
-    check_path_cover(g4, paths)
-    assert len(paths) == 6, ("Number of paths incorrect. Correct number" +
-                             "of paths is 6, and returned number of path is " + str(len(paths)))
+    # paths = min_path_cover(g4)
 
     # test case 6
     def neuro_trigraph_test(left, center, right, p=1.0):
@@ -290,8 +278,9 @@ if __name__ == "__main__":
         edges1, edges2 = neur_trig_edges(left, right, center, shuffle_p=p)
         ans = min_cover_trigraph(edges1, edges2)
         g = graph_converter(edges1, edges2)
+        parent = parent_dict(g)
         paths = min_path_cover(g)
-        check_path_cover(g, paths)
+        check_path_cover(g, paths, parent)
         assert len(paths) == len(ans), "Number of paths incorrect. Correct number of paths is " + str(len(ans)) + ",\
         and returned number of path is " + str(len(paths))
 
@@ -301,7 +290,7 @@ if __name__ == "__main__":
         right = int(random.uniform(2, 100))
         p = random.random()
         neuro_trigraph_test(left, center, right, p)
-    
+
     # test case 7
     def neuro_trigraph_stack_test(left, center, right, rep):
         '''
@@ -314,15 +303,16 @@ if __name__ == "__main__":
             rep (int): the number of times neurotrigraphs repeating
         '''
         edges1, edges2 = rep_graph(left, right, center, rep)
-        ans = min_cover_trigraph(edges1,  edges2)
+        ans = min_cover_trigraph(edges1, edges2)
         g = graph_converter(edges1, edges2)
+        parent = parent_dict(g)
         paths = min_path_cover(g)
-        check_path_cover(g, paths)
+        check_path_cover(g, paths, parent)
         assert len(paths) == len(ans), "Number of paths incorrect. Correct number of paths is " + str(len(ans)) + ",\
         returned number of path is " + str(len(paths))
         + "\n edges1" + str(edges1) + "\n edge2" + str(edges2)
         + "\n g" + str(g) + "\n ans" + str(ans) + "\n paths" + str(paths)
-   
+
     for i in range(100):
         left = int(random.uniform(2, 20))
         center = int(random.uniform(2, 20))

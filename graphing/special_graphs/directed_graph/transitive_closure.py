@@ -26,17 +26,41 @@ class Graph():
             self.dfs_traverse(i, i)
 
 
-def helper(g, trans_path, v):
-    """
-    input: DAG g as an adjacency list representation
-    b is in a's adj list if a --> b
-    construct transitive closure g' using DFS
-    store a path dict (trans_path), where key = vertice v,
-    value = a dict maps reachable nodes u to a path of v to u
-    store a graph dict trans_dict (transitive closure of g,
-    adjacency list representation)
-    for node v, return a dict maps all reachable nodes u to a path of v to u
-    """
+def transitive_closure(g):
+    '''
+    Parameters:
+        g (dict), a DAG with adjacent list representation
+    Return:
+        trans_path(dict), where key = vertice v, value = a dict maps reachable
+        nodes u to a path of v to u
+        trans_dict(dict), the adjacent list representation of the transitive
+        closure of g
+    '''
+    trans_path = {}
+    trans_dict = {}
+    for v in g:
+        transitive_closure_helper(g, trans_path, v)
+
+    for v in trans_path:
+        reachables = []
+        reachable_dict = trans_path[v]
+        for u in reachable_dict:
+            reachables.append(u)
+        trans_dict[v] = reachables
+    return trans_path, trans_dict
+
+
+def transitive_closure_helper(g, trans_path, v):
+    '''
+    Helper function of the 'transitive_closure'
+    Parameters:
+        g (dict), a DAG with adjacent list representation
+        trans_path(dict), where key = vertice v, value = a dict maps reachable
+        nodes u to a path of v to u
+        v: a vertex v
+    Return:
+        trans_path(dict)
+    '''
     if v in trans_path:
         return trans_path
     if len(g[v]) == 0:
@@ -45,28 +69,15 @@ def helper(g, trans_path, v):
     nbrs = g[v]
     v_dict = {}
     for u in nbrs:
-        recur = helper(g, trans_path, u)
+        recur = transitive_closure_helper(g, trans_path, u)
         u_dict = recur[u]
         for node in u_dict:
             if node not in v_dict:
+                # this is O(n), I will fix this later
                 v_dict[node] = [v] + u_dict[node]
         v_dict[u] = [v, u]
     trans_path[v] = v_dict
     return trans_path
-
-
-def transitive_closure(g):
-    trans_path = {}
-    trans_dict = {}
-    for v in g:
-        helper(g, trans_path, v)
-    for v in trans_path:
-        reachables = []
-        reachable_dict = trans_path[v]
-        for u in reachable_dict:
-            reachables.append(u)
-        trans_dict[v] = reachables
-    return trans_path, trans_dict
 
 
 def tst():
