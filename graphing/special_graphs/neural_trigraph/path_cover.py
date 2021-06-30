@@ -141,7 +141,7 @@ def max_matching_to_paths(flow_dict):
         # What if there is a path that doesn't start at layer0?
         if k.startswith("out_"):
             [_, vert_ind] = [int(st) for st in re.findall(r'\d+',k)]
-            if vert_ind not in seen_verts:                
+            if vert_ind not in seen_verts:
                 path.append(vert_ind)
                 curr_vert = k
                 ## Embark on a walk along this path. 
