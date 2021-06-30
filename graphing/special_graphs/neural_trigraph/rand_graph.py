@@ -42,11 +42,13 @@ def rep_graph(l_size=7, mid_size=5, r_size=7, reps=42):
     Creates a bigger tri-graph by repeating smaller graphs
     and concatenating all of them a set number of times.
     """
+    # The min path cover will be at-least this size.
     trivial_size = max(l_size, mid_size, r_size)
     edges1_fin = []
     edges2_fin = []
     paths1 = []
     for i in range(reps):
+        # Only select challenging graphs where min-paths >= trivial_size+2
         while len(paths1) < trivial_size+2:
             edges1, edges2 = neur_trig_edges(l_size,
                                              mid_size,
@@ -56,8 +58,7 @@ def rep_graph(l_size=7, mid_size=5, r_size=7, reps=42):
         edges1[:, 0] += l_size*i
         edges1[:, 1] += l_size * reps + mid_size*i - l_size
         edges2[:, 0] += l_size * reps + mid_size*i - l_size
-        edges2[:, 1] += l_size * reps + mid_size * reps + r_size*i\
-            - (l_size + r_size)
+        edges2[:, 1] += l_size * (reps-1) + mid_size * (reps-1) + r_size*i
         paths1 = []
         if i == 0:
             edges1_fin = np.copy(edges1)
