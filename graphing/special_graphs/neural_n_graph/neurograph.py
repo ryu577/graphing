@@ -5,6 +5,7 @@ from graphing.special_graphs.neural_trigraph.path_cover \
 from graphing.special_graphs.neural_trigraph.rand_graph import neur_trig_edges, rep_graph
 from graphing.special_graphs.directed_graph.transitive_closure import transitive_closure
 import random
+import time
 
 
 def max_matching(g):
@@ -110,8 +111,8 @@ def parent_dict(g):
 
 def construct_complete_path(g, paths):
     '''
-    some of the original_paths may be non-complete. We want to construct the
-    complete path from the first layer to the last layer
+    some of the original_paths may be incomplete. We want to construct the
+    complete paths from the first layer to the last layer
     Parameters:
         g(dict), DAG
         paths (list of list): the incomplete paths returned from 'recover_path'
@@ -203,6 +204,52 @@ def check_path_cover(g, paths):
     assert flag is True, "this is not a correct set of path" + paths
 
 
+# test case 7
+def neuro_trigraph_stack_test(left, center, right, rep):
+    '''
+    Create test cases by stacking small neurotrigraphs together, repeating
+    rep number of times
+    Parameters:
+        left (int): number of vertices on the left layer
+        center (int): number of vertices in the middle layer
+        right (int): number of vertices on the right layer
+        rep (int): the number of times neurotrigraphs repeating
+    '''
+    print("left: " + str(left*rep) + ", center:" + str(center*rep) + ", right:" + str(right*rep))
+    edges1, edges2 = rep_graph(left, right, center, rep)
+    print("Generated the graph.")
+    if not is_valid_3_neural(edges1, edges2):
+        print("Invalid graph this time")
+        return
+    start = time.time()
+    ans = min_cover_trigraph(edges1,  edges2)
+    end = time.time()
+    print("Original took: " + str(end-start) + " secs")
+    g = graph_converter(edges1, edges2)
+    start = time.time()
+    paths = min_path_cover(g)
+    end = time.time()
+    print("New method took: " + str(end-start) + " secs")
+    check_path_cover(g, paths)
+    print("Original method shows: " + str(len(ans)) + " paths.")
+    print("New method shows: " + str(len(paths)) + " paths.")
+    assert len(paths) == len(ans), "Number of paths incorrect. Correct number of paths is " + str(len(ans)) +\
+        "returned number of path is " + str(len(paths))\
+        + "\n edges1" + str(edges1) + "\n edge2" + str(edges2)\
+        + "\n g" + str(g) + "\n ans" + str(ans) + "\n paths" + str(paths)
+
+
+def tst():
+    for i in range(100):
+        left = int(random.uniform(5, 25))
+        center = int(random.uniform(2, 10))
+        right = int(random.uniform(5, 25))
+        rep = int(random.uniform(10, 100))
+        neuro_trigraph_stack_test(left, center, right, rep)
+        print("Passed:" + str(i))
+        print("#######################\n")
+
+
 if __name__ == "__main__":
     # test case 1
     g1 = {1: [4], 2: [4, 5], 3: [5], 4: [6, 7], 5: [8], 6: [], 7: [], 8: []}
@@ -258,37 +305,4 @@ if __name__ == "__main__":
         right = int(random.uniform(2, 100))
         p = random.random()
         neuro_trigraph_test(left, center, right, p)
-
-    # test case 7
-    def neuro_trigraph_stack_test(left, center, right, rep):
-        '''
-        Create test cases by stacking small neurotrigraphs together, repeating
-        rep number of times
-        Parameters:
-            left (int): number of vertices on the left layer
-            center (int): number of vertices in the middle layer
-            right (int): number of vertices on the right layer
-            rep (int): the number of times neurotrigraphs repeating
-        '''
-        print("left: " + str(left*rep) + ", center:" + str(center*rep) + ", right:" + str(right*rep))
-        edges1, edges2 = rep_graph(left, right, center, rep)
-        print("Generated the graph.")
-        if not is_valid_3_neural(edges1, edges2):
-            print("Invalid graph this time")
-            return
-        ans = min_cover_trigraph(edges1,  edges2)
-        g = graph_converter(edges1, edges2)
-        paths = min_path_cover(g)
-        check_path_cover(g, paths)
-        assert len(paths) == len(ans), "Number of paths incorrect. Correct number of paths is " + str(len(ans)) +\
-            "returned number of path is " + str(len(paths))\
-            + "\n edges1" + str(edges1) + "\n edge2" + str(edges2)\
-            + "\n g" + str(g) + "\n ans" + str(ans) + "\n paths" + str(paths)
-
-    for i in range(100):
-        left = int(random.uniform(2, 20))
-        center = int(random.uniform(2, 20))
-        right = int(random.uniform(2, 20))
-        rep = int(random.uniform(2, 10))
-        neuro_trigraph_stack_test(left, center, right, rep)
-        print("I guess it passed:" + str(i))
+    tst()
