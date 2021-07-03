@@ -106,6 +106,16 @@ def create_central_vert_dict(edges1, edges2):
     return vert_set
 
 
+def is_valid_3_neural(edges1, edges2):
+    if min(edges2[::,1])-max(edges1[::,1])!=1:
+        return False
+    if min(edges1[::,1])-max(edges1[::,0])!=1:
+        return False
+    if min(edges2[::,1])-max(edges2[::,0])!=1:
+        return False
+    return True
+
+
 def tst1():
     ## Test case-1
     edges1 = np.array([[1,4],[2,4],[2,5],[3,5]])

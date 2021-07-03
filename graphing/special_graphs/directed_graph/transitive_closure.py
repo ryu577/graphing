@@ -2,7 +2,7 @@ from collections import defaultdict
 import numpy as np
 
 
-class Graph():
+class DGraph():
     def __init__(self, num_vertices):
         self.num_vertices = num_vertices
         self.graph = defaultdict(list)
@@ -73,7 +73,7 @@ def transitive_closure_helper(g, trans_path, v):
         u_dict = recur[u]
         for node in u_dict:
             if node not in v_dict:
-                # this is O(n), I will fix this later
+                # TODO: O(n), will fix later to amortized O(1).
                 v_dict[node] = [v] + u_dict[node]
         v_dict[u] = [v, u]
     trans_path[v] = v_dict
@@ -81,7 +81,7 @@ def transitive_closure_helper(g, trans_path, v):
 
 
 def tst():
-    g = Graph(4)
+    g = DGraph(4)
     g.add_edge(0, 1)
     g.add_edge(0, 2)
     g.add_edge(1, 2)
