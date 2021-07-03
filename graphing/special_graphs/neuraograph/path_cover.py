@@ -2,66 +2,14 @@ import networkx as nx
 from networkx.algorithms import bipartite
 from graphing.special_graphs.neural_trigraph.path_cover \
             import min_cover_trigraph, min_cover_trigraph_heuristic1
-from graphing.special_graphs.neural_trigraph.rand_graph import *
-#from graphing.special_graphs.directed_graph.transitive_closure import transitive_closure
+from graphing.special_graphs.neural_trigraph.rand_graph import neur_trig_edges, rep_graph
+from graphing.special_graphs.directed_graph.transitive_closure import transitive_closure
+from graphing.special_graphs.neural_trigraph.neural_trigraph import is_valid_3_neural
 import random
-# import pickle
+import time
 
 
-def transitive_closure(g):
-    '''
-    Parameters:
-        g (dict), a DAG with adjacent list representation
-    Return:
-        trans_path(dict), where key = vertice v, value = a dict maps reachable
-        nodes u to a path of v to u
-        trans_dict(dict), the adjacent list representation of the transitive
-        closure of g
-    '''
-    trans_path = {}
-    trans_dict = {}
-    for v in g:
-        transitive_closure_helper(g, trans_path, v)
-
-    for v in trans_path:
-        reachables = []
-        reachable_dict = trans_path[v]
-        for u in reachable_dict:
-            reachables.append(u)
-        trans_dict[v] = reachables
-    return trans_path, trans_dict
-
-
-def transitive_closure_helper(g, trans_path, v):
-    '''
-    Helper function of the 'transitive_closure'
-    Parameters:
-        g (dict), a DAG with adjacent list representation
-        trans_path(dict), where key = vertice v, value = a dict maps reachable
-        nodes u to a path of v to u
-        v: a vertex v
-    Return:
-        trans_path(dict)
-    '''
-    if v in trans_path:
-        return trans_path
-    if len(g[v]) == 0:
-        trans_path[v] = {}
-        return trans_path
-    nbrs = g[v]
-    v_dict = {}
-    for u in nbrs:
-        recur = transitive_closure_helper(g, trans_path, u)
-        u_dict = recur[u]
-        for node in u_dict:
-            if node not in v_dict:
-                v_dict[node] = [v] + u_dict[node]
-        v_dict[u] = [v, u]
-    trans_path[v] = v_dict
-    return trans_path
-
-
-def max_matching(g):
+def create_path_cover(g):
     '''
     idea:
         1. create the bipartite graph. split each node v into two nodes v_top
@@ -131,7 +79,7 @@ def recover_path(g):
     '''
     original_paths = []
     trans_path, trans_dict = transitive_closure(g)
-    ret_paths = max_matching(trans_dict)
+    ret_paths = create_path_cover(trans_dict)
     for path in ret_paths:
         original_path = []
         for i in range(len(path)-1):
@@ -164,8 +112,8 @@ def parent_dict(g):
 
 def construct_complete_path(g, paths):
     '''
-    some of the original_paths may be non-complete. We want to construct the
-    complete path from the first layer to the last layer
+    some of the original_paths may be incomplete. We want to construct the
+    complete paths from the first layer to the last layer
     Parameters:
         g(dict), DAG
         paths (list of list): the incomplete paths returned from 'recover_path'
@@ -219,7 +167,7 @@ def graph_converter(edges1, edges2):
     return g
 
 
-def check_path_cover(g, paths, parent):
+def check_path_cover(g, paths):
     '''
     check if the generated paths have covered all vertices, and if the paths
     are valid paths
@@ -227,6 +175,7 @@ def check_path_cover(g, paths, parent):
         g (adjacent list), DAG
         paths (list of list), the result we obtained
     '''
+    parent = parent_dict(g)
     ret_vertices = set()
     for path in paths:
         for v in path:
@@ -246,24 +195,82 @@ def check_path_cover(g, paths, parent):
     assert flag is True, "this is not a correct set of path" + paths
 
 
+# test case 7
+def neuro_trigraph_stack_test(left, center, right, rep):
+    '''
+    Create test cases by stacking small neurotrigraphs together, repeating
+    rep number of times
+    Parameters:
+        left (int): number of vertices on the left layer
+        center (int): number of vertices in the middle layer
+        right (int): number of vertices on the right layer
+        rep (int): the number of times neurotrigraphs repeating
+    '''
+    print("left: " + str(left*rep) + ", center:" + str(center*rep) + ", right:" + str(right*rep))
+    edges1, edges2 = rep_graph(left, right, center, rep)
+    print("Generated the graph.")
+    if not is_valid_3_neural(edges1, edges2):
+        print("Invalid graph this time")
+        return
+    start = time.time()
+    ans = min_cover_trigraph(edges1,  edges2)
+    end = time.time()
+    print("Original took: " + str(end-start) + " secs")
+    g = graph_converter(edges1, edges2)
+    start = time.time()
+    paths = min_path_cover(g)
+    end = time.time()
+    print("New method took: " + str(end-start) + " secs")
+    check_path_cover(g, paths)
+    print("Original method shows: " + str(len(ans)) + " paths.")
+    print("New method shows: " + str(len(paths)) + " paths.")
+    assert len(paths) == len(ans), "Number of paths incorrect. Correct number of paths is " + str(len(ans)) +\
+        "returned number of path is " + str(len(paths))\
+        + "\n edges1" + str(edges1) + "\n edge2" + str(edges2)\
+        + "\n g" + str(g) + "\n ans" + str(ans) + "\n paths" + str(paths)
+
+
+def tst_stack():
+    for i in range(100):
+        left = int(random.uniform(5, 25))
+        center = int(random.uniform(2, 10))
+        right = int(random.uniform(5, 25))
+        rep = int(random.uniform(10, 100))
+        neuro_trigraph_stack_test(left, center, right, rep)
+        print("Passed:" + str(i))
+        print("#######################\n")
+
+
 if __name__ == "__main__":
     # test case 1
     g1 = {1: [4], 2: [4, 5], 3: [5], 4: [6, 7], 5: [8], 6: [], 7: [], 8: []}
-    # paths = min_path_cover(g1)
+    paths = min_path_cover(g1)
+    check_path_cover(g1, paths)
+    assert len(paths) == 3, ("Number of paths incorrect. Correct number" +
+                             "of paths is 3, and returned number of path is " + str(len(paths)))
 
     # test case 2
     g2 = {1: [4], 2: [4, 5], 3: [5], 4: [6], 5: [6], 6: []}
-    # paths = min_path_cover(g2)
+    paths = min_path_cover(g2)
+    check_path_cover(g2, paths)
+    assert len(paths) == 3, ("Number of paths incorrect. Correct number" +
+                             "of paths is 3, and returned number of path is " + str(len(paths)))
 
     # test case 3
     g3 = {1: [4], 2: [5], 3: [6, 7], 4: [8], 5: [8, 9, 10], 6: [10], 7: [9],
           8: [11, 12], 9: [12], 10: [12, 13], 11: [], 12: [], 13: []}
-    # paths = min_path_cover(g3)
+    paths = min_path_cover(g3)
+    check_path_cover(g3, paths)
+    assert len(paths) == 4, ("Number of paths incorrect. Correct number" +
+                             "of paths is 4, and returned number of path is " + str(len(paths)))
 
     # test case 4
     g4 = {1: [4], 2: [5], 3: [6, 7], 4: [8], 5: [8], 6: [8, 9], 7: [10], 
           8: [11], 9: [11], 10: [12, 13, 14], 11: [], 12: [], 13: [], 14: []}
-    # paths = min_path_cover(g4)
+    paths = min_path_cover(g4)
+    check_path_cover(g4, paths)
+    assert len(paths) == 6, ("Number of paths incorrect. Correct number" +
+                             "of paths is 6, and returned number of path is " + str(len(paths)))
 
     # test case 6
     def neuro_trigraph_test(left, center, right, p=1.0):
@@ -278,9 +285,8 @@ if __name__ == "__main__":
         edges1, edges2 = neur_trig_edges(left, right, center, shuffle_p=p)
         ans = min_cover_trigraph(edges1, edges2)
         g = graph_converter(edges1, edges2)
-        parent = parent_dict(g)
         paths = min_path_cover(g)
-        check_path_cover(g, paths, parent)
+        check_path_cover(g, paths)
         assert len(paths) == len(ans), "Number of paths incorrect. Correct number of paths is " + str(len(ans)) + ",\
         and returned number of path is " + str(len(paths))
 
@@ -290,32 +296,4 @@ if __name__ == "__main__":
         right = int(random.uniform(2, 100))
         p = random.random()
         neuro_trigraph_test(left, center, right, p)
-
-    # test case 7
-    def neuro_trigraph_stack_test(left, center, right, rep):
-        '''
-        Create test cases by stacking small neurotrigraphs together, repeating
-        rep number of times
-        Parameters:
-            left (int): number of vertices on the left layer
-            center (int): number of vertices in the middle layer
-            right (int): number of vertices on the right layer
-            rep (int): the number of times neurotrigraphs repeating
-        '''
-        edges1, edges2 = rep_graph(left, right, center, rep)
-        ans = min_cover_trigraph(edges1, edges2)
-        g = graph_converter(edges1, edges2)
-        parent = parent_dict(g)
-        paths = min_path_cover(g)
-        check_path_cover(g, paths, parent)
-        assert len(paths) == len(ans), "Number of paths incorrect. Correct number of paths is " + str(len(ans)) + ",\
-        returned number of path is " + str(len(paths))
-        + "\n edges1" + str(edges1) + "\n edge2" + str(edges2)
-        + "\n g" + str(g) + "\n ans" + str(ans) + "\n paths" + str(paths)
-
-    for i in range(100):
-        left = int(random.uniform(2, 20))
-        center = int(random.uniform(2, 20))
-        right = int(random.uniform(2, 20))
-        rep = int(random.uniform(2, 10))
-        neuro_trigraph_stack_test(left, center, right, rep)
+    tst_stack()
