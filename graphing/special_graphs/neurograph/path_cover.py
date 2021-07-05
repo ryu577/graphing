@@ -154,7 +154,6 @@ def graph_converter(edges1, edges2):
     vertices = set()
     for e in edges1:
         vertices.add(e[0])
-        vertices.add(e[1])
     for e in edges2:
         vertices.add(e[0])
         vertices.add(e[1])
