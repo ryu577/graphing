@@ -22,7 +22,7 @@ def get_schedule(probs_left, probs_right, edges, num_nodes=20):
 
     flowed = 0
     while flowed < num_nodes:
-        print("Now running networkx max-flow-min-cost " + str(right_max_ix))
+        # print("Now running networkx max-flow-min-cost " + str(right_max_ix))
         # res_dict = nx.max_flow_min_cost(g, source, dest)
         res_val, res_dict = nx.maximum_flow(g, source, dest)
         flowed = res_val
@@ -48,4 +48,38 @@ def tst():
                     [3, 7]
     ])
     res = get_schedule(probs_left, probs_right, edges)
+    return res
 
+
+def score(flow_dict, probs_left, probs_right):
+    dest = max(probs_right.keys()) + 1
+    source_flows = flow_dict[0]
+    total_flow = sum(source_flows.values())
+    summ = 0
+    for k in probs_left.keys():
+        summ += (source_flows[k]/total_flow-probs_left[k])**2
+    for k in probs_right.keys():
+        summ += (probs_right[k] - flow_dict[k][dest]/total_flow)**2
+    return summ
+
+
+def best_schedule(n_iter=100):
+    probs_left = {1: .3333, 2: .33333, 3: .33333}
+    probs_right = {4: .25, 5: .15, 6: .15, 7: .45}
+    edges = np.array([
+                    [1, 4],
+                    [1, 5],
+                    [2, 4],
+                    [3, 5],
+                    [3, 6],
+                    [3, 7]
+    ])
+    min_score = np.inf
+    best_dict = {}
+    for _ in range(n_iter):
+        res = get_schedule(probs_left, probs_right, edges)
+        candidate_score = score(res, probs_left, probs_right)
+        if candidate_score < min_score:
+            min_score = candidate_score
+            best_dict = res
+    return best_dict
