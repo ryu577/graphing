@@ -8,8 +8,8 @@ import numpy as np
 import re
 
 
-def min_cover_trigraph(edges1,edges2):
-    nu = NeuralTriGraph(edges1,edges2)
+def min_cover_trigraph(edges1, edges2):
+    nu = NeuralTriGraph(edges1, edges2)
     nu.create_bipartite_graph()
     flow_val, flow_dict = nx.maximum_flow(nu.flow_graph, 'source', 'sink')
     paths = max_matching_to_paths(flow_dict)
@@ -25,9 +25,9 @@ def complete_paths(paths, edges1, edges2):
         if len(pt) == 3:
             comp_paths.append(pt)
         elif len(pt) == 2:
-            l_layer = 1 if pt[0]<=l_verts else (2 if pt[0]<=c_verts else 3)
-            r_layer = 1 if pt[1]<=l_verts else (2 if pt[1]<=c_verts else 3)
-            if l_layer==1 and r_layer==2:
+            l_layer = 1 if pt[0] <= l_verts else (2 if pt[0] <= c_verts else 3)
+            r_layer = 1 if pt[1] <= l_verts else (2 if pt[1] <= c_verts else 3)
+            if l_layer == 1 and r_layer == 2:
                 third = edges2[edges2[:,0]==pt[1]][0][1]
                 comp_paths.append([pt[0],pt[1],third])
             elif l_layer==2 and r_layer==3:
@@ -107,27 +107,27 @@ def obtain_paths(self):
     self.vert_disjoint_paths = max_matching_to_paths(flow_dict)
     final_paths = []
     for pth in self.vert_disjoint_paths:
-        if len(pth)==3:
+        if len(pth) == 3:
             final_paths.append(pth)
-        elif len(pth)==2:
+        elif len(pth) == 2:
             left_layer = self.determine_layer(pth[0])
             right_layer = self.determine_layer(pth[1])
-            if left_layer==0 and right_layer==2:
+            if left_layer == 0 and right_layer == 2:
                 central_candidates = self.layer_1_dict[pth[0]]\
                                 .intersection(self.layer_3_dict[pth[1]])
-                ## Randomly pick a central vertex.
-                central = np.random.sample(central_candidates,1)[0]
-                pth1 = [pth[0],central,pth[1]]
+                # Randomly pick a central vertex.
+                central = np.random.sample(central_candidates, 1)[0]
+                pth1 = [pth[0], central, pth[1]]
                 final_paths.append(pth1)
-            elif left_layer==0:
-                right_sampled = np.random.sample(self.central_vert_dict[pth[1]]\
-                        .r_edges,1)[0]
-                pth1 = [pth[0],pth[1],right_sampled]
+            elif left_layer == 0:
+                right_sampled = np.random.sample(self.central_vert_dict[pth[1]]
+                                                 .r_edges, 1)[0]
+                pth1 = [pth[0], pth[1], right_sampled]
                 final_paths.append(pth1)
-            elif right_layer==2:
-                left_sampled = np.random.sample(self.central_vert_dict[pth[0]]\
-                        .l_edges,1)[0]
-                pth1 = [left_sampled,pth[0],pth[1]]
+            elif right_layer == 2:
+                left_sampled = np.random.sample(self.central_vert_dict[pth[0]]
+                                                .l_edges, 1)[0]
+                pth1 = [left_sampled, pth[0], pth[1]]
                 final_paths.append(pth1)
     self.final_paths = final_paths
 

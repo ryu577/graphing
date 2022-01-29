@@ -1,7 +1,6 @@
 import numpy as np
 import networkx as nx
 import pandas as pd
-from collections import Counter
 from graphing.special_graphs.neural_trigraph.rand_graph import neur_trig_edges
 
 
@@ -48,7 +47,7 @@ def get_schedule(probs_left, probs_right, edges1, edges2, num_nodes=20):
                     g[v][dest]['capacity'] += 1
                 elif np.random.uniform() < 0.9:
                     g[v][dest]['capacity'] += 1
-            except:
+            except Exception:
                 print("v: " + str(v) + "dest:" + str(dest))
 
     return res_dict
@@ -135,7 +134,7 @@ def create_schedule(res, edges1, edges2):
         nodes_arr1, l_arr1, r_arr1 = reconcile_layers_iter(arr1, arr2)
         try:
             oses = oses[np.array(r_arr1)-1]
-        except:
+        except Exception:
             raise Exception("Exception when processing vm " + str(vm))
         res_oses = np.concatenate((res_oses, oses))
         hws = hws[np.array(l_arr1)-1]
