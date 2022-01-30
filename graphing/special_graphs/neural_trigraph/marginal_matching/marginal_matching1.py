@@ -4,10 +4,59 @@ import pandas as pd
 from graphing.special_graphs.neural_trigraph.rand_graph import neur_trig_edges
 
 
+def get_schedule_rand(edges1, edges2, num_nodes=20):
+    source = 0
+    dest = np.max(edges2)+1
+    #print("destination: " + str(dest))
+
+    left_max_ix = max(edges1[::, 0])
+    center_max_ix = max(edges1[::, 1])
+    right_max_ix = max(edges2[::, 1])
+
+    g = nx.DiGraph()
+    for v in np.arange(1, left_max_ix+1):
+        cap = 1
+        g.add_edge(source, v, capacity=cap, weight=1/(cap+1e-3))
+
+    for u, v in edges1:
+        g.add_edge(u, v, capacity=np.inf, weight=1)
+
+    for u, v in edges2:
+        g.add_edge(u, v, capacity=np.inf, weight=1)
+
+    for v in np.arange(center_max_ix+1, right_max_ix+1):
+        cap = 1
+        g.add_edge(v, dest, capacity=cap, weight=1/(cap+1e-3))
+
+    flowed = 0
+    while flowed < num_nodes:
+        # print("Now running networkx max-flow-min-cost " + str(right_max_ix))
+        # res_dict = nx.max_flow_min_cost(g, source, dest)
+        res_val, res_dict = nx.maximum_flow(g, source, dest)
+        flowed = res_val
+        if np.random.uniform() > 0.5:
+            h = np.random.choice(left_max_ix) + 1
+            g[0][h]['capacity'] += 1
+        else:
+            v = np.random.choice(right_max_ix - center_max_ix - 1)\
+                            + center_max_ix + 1
+            v = min(v, right_max_ix)
+            # TODO: Fix this band-aid and properly sample the right layer.
+            try:
+                if g[v][dest]['capacity'] > 1:
+                    g[v][dest]['capacity'] += 1
+                elif np.random.uniform() < 0.9:
+                    g[v][dest]['capacity'] += 1
+            except Exception:
+                print("v: " + str(v) + "dest:" + str(dest))
+
+    return res_dict
+
+
 def get_schedule(probs_left, probs_right, edges1, edges2, num_nodes=20):
     source = 0
     dest = np.max(edges2)+1
-    print("destination: " + str(dest))
+    # print("destination: " + str(dest))
 
     left_max_ix = max(edges1[::, 0])
     center_max_ix = max(edges1[::, 1])
@@ -30,7 +79,7 @@ def get_schedule(probs_left, probs_right, edges1, edges2, num_nodes=20):
 
     flowed = 0
     while flowed < num_nodes:
-        print("Now running networkx max-flow-min-cost " + str(right_max_ix))
+        # print("Now running networkx max-flow-min-cost " + str(right_max_ix))
         # res_dict = nx.max_flow_min_cost(g, source, dest)
         res_val, res_dict = nx.maximum_flow(g, source, dest)
         flowed = res_val
