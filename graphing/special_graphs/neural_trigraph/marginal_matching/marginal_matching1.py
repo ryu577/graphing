@@ -7,7 +7,7 @@ from graphing.special_graphs.neural_trigraph.rand_graph import neur_trig_edges
 def get_schedule_rand(edges1, edges2, num_nodes=20):
     source = 0
     dest = np.max(edges2)+1
-    #print("destination: " + str(dest))
+    # print("destination: " + str(dest))
 
     left_max_ix = max(edges1[::, 0])
     center_max_ix = max(edges1[::, 1])
@@ -58,9 +58,9 @@ def get_schedule(probs_left, probs_right, edges1, edges2, num_nodes=20):
     dest = np.max(edges2)+1
     # print("destination: " + str(dest))
 
-    left_max_ix = max(edges1[::, 0])
-    center_max_ix = max(edges1[::, 1])
-    right_max_ix = max(edges2[::, 1])
+    left_max_ix = int(max(edges1[::, 0]))
+    center_max_ix = int(max(edges1[::, 1]))
+    right_max_ix = int(max(edges2[::, 1]))
 
     g = nx.DiGraph()
     for v in probs_left.keys():
