@@ -8,11 +8,21 @@ def score(flow_dict, probs_left, probs_center, probs_right):
     total_flow = sum(source_flows.values())
     summ = 0
     for k in probs_left.keys():
-        summ += (source_flows[k]/total_flow-probs_left[k])**2
+        if k in source_flows:
+            summ += (source_flows[k]/total_flow-probs_left[k])**2/len(probs_left)
+        else:
+            summ += probs_left[k]**2/len(probs_left)
     for k in probs_right.keys():
-        summ += (probs_right[k] - flow_dict[k][dest]/total_flow)**2
+        if k in flow_dict:
+            summ += (probs_right[k] - flow_dict[k][dest]/total_flow)**2/len(probs_center)
+        else:
+            summ += probs_right[k]**2/len(probs_center)
     for k in probs_center.keys():
-    	summ += (probs_center[k] - sum(flow_dict[k].values())/total_flow)**2
+        if k in flow_dict:
+            summ += (probs_center[k] -
+                     sum(flow_dict[k].values())/total_flow)**2/len(probs_right)
+        else:
+            summ += probs_center[k]**2/len(probs_right)
     return summ
 
 
