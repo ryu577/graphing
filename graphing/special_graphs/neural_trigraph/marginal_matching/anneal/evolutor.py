@@ -60,7 +60,8 @@ class Evoluter(object):
         anneal_rate = 0.99
         b_ix = 0
         for ix in range(n_iter):
-            print("Current score: " + str(self.curr_score) + " best score: " + str(self.min_score))
+            print("Current score: " + str(self.curr_score) +\
+                  " best score: " + str(self.min_score))
             prob_swtch *= anneal_rate
             self.replace_one_path()
             if self.candidate_score <= self.min_score:
