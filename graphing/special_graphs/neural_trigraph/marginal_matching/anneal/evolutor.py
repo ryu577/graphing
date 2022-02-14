@@ -1,14 +1,20 @@
 from turtle import st
-from graphing.special_graphs.neural_trigraph.marginal_matching.marginal_matching1 import get_schedule, get_schedule_rand
-from graphing.special_graphs.neural_trigraph.marginal_matching.scoring import score
+from graphing.special_graphs.neural_trigraph.marginal_matching.\
+    marginal_matching1 import get_schedule, get_schedule_rand
+from graphing.special_graphs.neural_trigraph.marginal_matching.scoring\
+    import score
+from graphing.special_graphs.neural_trigraph.path_set import\
+    add_one_path, remove_one_path
 from graphing.special_graphs.neural_trigraph.toy_graphs import ToyGraph1
+from graphing.graph import remove_zeros
 import numpy as np
 import copy
 
 
 class Evolutor(object):
     def __init__(self, probs_l=None, probs_c=None, probs_r=None,
-                 edges1=None, edges2=None, num_nodes=280):
+                 edges1=None, edges2=None, num_nodes=280,
+                 start_dict=None):
         if probs_l is None:
             self.probs_left = ToyGraph1.probs_left.copy()
             self.probs_center = ToyGraph1.probs_center.copy()
@@ -27,8 +33,12 @@ class Evolutor(object):
         self.tmp_probs_center = self.probs_center.copy()
         self.tmp_probs_right = self.probs_right.copy()
         self.update_best_probs()
-        self.best_dict = get_schedule(self.probs_left, self.probs_right,
-                                      self.edges1, self.edges2, num_nodes)
+        if start_dict is None:
+            self.best_dict = get_schedule(self.probs_left, self.probs_right,
+                                      self.edges1, 
+                                      self.edges2, num_nodes)
+        else:
+            self.best_dict = start_dict
         self.best_dict = remove_zeros(self.best_dict)
         self.min_score = score(self.best_dict, self.probs_left,
                                self.probs_center, self.probs_right)
@@ -62,7 +72,7 @@ class Evolutor(object):
                     and (ix - b_ix) > 10:
                 self.reset_to_best_probs()
 
-    def anneal(self, n_iter=1000):
+    def anneal(self, n_iter=1000, presv_cov=False):
         prob_swtch = 1.0
         anneal_rate = 0.99
         b_ix = 0
@@ -70,7 +80,7 @@ class Evolutor(object):
             print("Current score: " + str(self.curr_score) +\
                   " best score: " + str(self.min_score))
             prob_swtch *= anneal_rate
-            self.replace_one_path()
+            self.replace_one_path(presv_cov)
             if self.candidate_score <= self.min_score:
                 self.best_dict = copy.deepcopy(self.candidate_dict)
                 self.min_score = self.candidate_score
@@ -80,7 +90,8 @@ class Evolutor(object):
             elif prob_swtch < np.random.uniform():
                 self.curr_dict = copy.deepcopy(self.candidate_dict)
                 self.curr_score = self.candidate_score
-            if (self.candidate_score - self.min_score)/self.min_score > 2.0 and (ix-b_ix)>225:
+            if (self.candidate_score - self.min_score)/self.min_score > 2.0\
+                    and (ix-b_ix)>225:
                 self.reset_to_best()
 
     def perturb_probs(self):
@@ -103,8 +114,9 @@ class Evolutor(object):
         self.tmp_probs_center = self.probs_center_bst.copy()
         self.tmp_probs_right = self.probs_right_bst.copy()
 
-    def replace_one_path(self):
-        self.candidate_dict = remove_one_path(self.curr_dict, self.dest)
+    def replace_one_path(self, presv_cov=False):
+        self.candidate_dict = remove_one_path(self.curr_dict, self.dest,
+                                              presv_cov)
         self.candidate_dict = add_one_path(self.candidate_dict,
                                            self.edges1,
                                            self.edges2)
@@ -118,7 +130,7 @@ class Evolutor(object):
         self.curr_score = self.min_score
 
 
-def remove_one_path(res, dest):
+def remove_one_path1(res, dest):
     complete = False
     ix = 0
     while not complete:
@@ -150,7 +162,7 @@ def remove_one_path(res, dest):
     return remove_zeros(res1)
 
 
-def add_one_path(res, edges1, edges2):
+def add_one_path1(res, edges1, edges2):
     res1 = copy.deepcopy(res)
     dest = max(edges2[::, 1]) + 1
     strt_ix = np.random.choice(edges1[::, 0])
@@ -187,14 +199,3 @@ def add_one_path(res, edges1, edges2):
         res1[end_ix][dest] = 1
     return res1
 
-
-def remove_zeros(res):
-    res1 = {}
-    for k in res.keys():
-        res2 = {}
-        for kk in res[k].keys():
-            if res[k][kk] > 0:
-                res2[kk] = res[k][kk]
-        if len(res2) > 0:
-            res1[k] = res2
-    return res1
