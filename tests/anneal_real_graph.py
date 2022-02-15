@@ -55,51 +55,51 @@ def residual_probs(ps, xs, n):
     return qs
 
 
-edges1, edges2 = prep_trigr_edges()
+def tst():
+    edges1, edges2 = prep_trigr_edges()
 
-probs_l = even_probs(edges1[::, 0])
-probs_c = even_probs(edges1[::, 1])
-probs_r = even_probs(edges2[::, 1])
-
-
-## Coverage schedule.
-paths1 = min_cover_trigraph(edges1, edges2)
-paths2 = np.array(complete_paths(paths1, edges1, edges2))
-flow_dict_cov = path_arr_to_flow_dict(paths2)
+    probs_l = even_probs(edges1[::, 0])
+    probs_c = even_probs(edges1[::, 1])
+    probs_r = even_probs(edges2[::, 1])
 
 
-n = 300
-## Approach-1
-qs_l, qs_c, qs_r = get_residual_targets(paths2, probs_l,
-                                        probs_c, probs_r, n)
+    ## Coverage schedule.
+    paths1 = min_cover_trigraph(edges1, edges2)
+    paths2 = np.array(complete_paths(paths1, edges1, edges2))
+    flow_dict_cov = path_arr_to_flow_dict(paths2)
 
 
-ev = Evolutor(qs_l, qs_c, qs_r,
-              edges1, edges2,
-              n-len(paths2))
-ev.anneal(presv_cov=False, n_iter=5000)
+    n = 300
+    ## Approach-1
+    qs_l, qs_c, qs_r = get_residual_targets(paths2, probs_l,
+                                            probs_c, probs_r, n)
 
-final_pths = add_path_dicts(ev.best_dict, flow_dict_cov)
 
-scr1 = score(final_pths, probs_l, probs_c, probs_r)
+    ev = Evolutor(qs_l, qs_c, qs_r,
+                  edges1, edges2,
+                  n-len(paths2))
+    ev.anneal(presv_cov=False, n_iter=5000)
 
-## Approach-2
+    final_pths = add_path_dicts(ev.best_dict, flow_dict_cov)
 
-# First create a random set of paths above coverage.
-flow_dict_init = copy.deepcopy(flow_dict_cov)
+    scr1 = score(final_pths, probs_l, probs_c, probs_r)
 
-for ix in range(n-len(paths2)):
-    flow_dict_init = add_one_path(flow_dict_init, edges1, edges2)
+    ## Approach-2
+    # First create a random set of paths above coverage.
+    flow_dict_init = copy.deepcopy(flow_dict_cov)
 
-ev1 = Evolutor(probs_l, probs_c, probs_r,
-              edges1, edges2, n, 
-              start_dict=flow_dict_init)
+    for ix in range(n-len(paths2)):
+        flow_dict_init = add_one_path(flow_dict_init, edges1, edges2)
 
-ev1.anneal(presv_cov=True, n_iter=5000)
+    ev1 = Evolutor(probs_l, probs_c, probs_r,
+                  edges1, edges2, n, 
+                  start_dict=flow_dict_init)
 
-scr2 = ev1.min_score
+    ev1.anneal(presv_cov=True, n_iter=5000)
 
-print("Score for first approach: " + str(scr1))
-print("####################")
-print("Score for second approach: " + str(scr2))
+    scr2 = ev1.min_score
+
+    print("Score for first approach: " + str(scr1))
+    print("####################")
+    print("Score for second approach: " + str(scr2))
 
