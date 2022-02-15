@@ -2,6 +2,7 @@ from graphing.special_graphs.neural_trigraph.central_vert\
     import NeuralTriGraphCentralVert
 from graphing.special_graphs.neural_trigraph.neural_trigraph\
     import NeuralTriGraph
+from collections import defaultdict
 from graphing.graph_utils import min_edge_cover
 import networkx as nx
 import numpy as np
@@ -46,7 +47,7 @@ def complete_paths(paths, edges1, edges2):
                 comp_paths.append([pt[0], c_cand, r_cand])
             elif layer == 2:
                 l_cand = edges1[edges1[:, 1] == pt[0]][0][0]
-                r_cand = edges2[edges2[:, 1] == pt[0]][0][1]
+                r_cand = edges2[edges2[:, 0] == pt[0]][0][1]
                 comp_paths.append([l_cand, pt[0], r_cand])
             else:
                 c_cand = edges2[edges2[:, 1] == pt[0]][0][0]
@@ -135,7 +136,8 @@ def obtain_paths(self):
 def max_matching_to_paths(flow_dict):
     paths = []; path=[]
     seen_verts = set()
-    # Prioritize earlier layers to avoid starting larger paths from the middle,
+    # Prioritize earlier layers to avoid starting larger paths
+    # from the middle,
     # which will incorrectly split them into multiple paths.
     for k in sorted(flow_dict.keys()):
         # What if there is a path that doesn't start at layer0?
@@ -173,5 +175,6 @@ if __name__=="__main__":
     paths = vert_set_to_paths(v_set)
     print(paths)
     paths2 = min_cover_trigraph(edges1,edges2)
+    paths3 = complete_paths(paths2)
     print(paths2)
 
