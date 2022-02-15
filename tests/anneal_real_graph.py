@@ -62,14 +62,14 @@ probs_c = even_probs(edges1[::, 1])
 probs_r = even_probs(edges2[::, 1])
 
 
-## Coverage schedule.
+# Coverage schedule.
 paths1 = min_cover_trigraph(edges1, edges2)
 paths2 = np.array(complete_paths(paths1, edges1, edges2))
 flow_dict_cov = path_arr_to_flow_dict(paths2)
 
 
 n = 300
-## Approach-1
+# Approach-1
 qs_l, qs_c, qs_r = get_residual_targets(paths2, probs_l,
                                         probs_c, probs_r, n)
 
@@ -83,7 +83,7 @@ final_pths = add_path_dicts(ev.best_dict, flow_dict_cov)
 
 scr1 = score(final_pths, probs_l, probs_c, probs_r)
 
-## Approach-2
+# Approach-2
 
 # First create a random set of paths above coverage.
 flow_dict_init = copy.deepcopy(flow_dict_cov)
