@@ -9,20 +9,22 @@ def get_probs(arr):
         probs_l[int(ix)] = 1/len(st)
     return probs_l
 
-edges1 = np.loadtxt("edges1.csv")
-edges2 = np.loadtxt("edges2.csv")
 
-edges1 = edges1.astype(int)
-edges2 = edges2.astype(int)
+def tst_real_edges():
+    edges1 = np.loadtxt("edges1.csv")
+    edges2 = np.loadtxt("edges2.csv")
 
-# edges1 is 0-indexed, so add 1's
-edges1 += 1
-edges2 += 1
+    edges1 = edges1.astype(int)
+    edges2 = edges2.astype(int)
 
-probs_l = get_probs(edges1[::, 0])
-probs_c = get_probs(edges1[::, 1])
-probs_r = get_probs(edges2[::, 1])
+    # edges1 is 0-indexed, so add 1's
+    edges1 += 1
+    edges2 += 1
 
-ev = Evolutor(probs_l, probs_c, probs_r, edges1, edges2, 280)
+    probs_l = get_probs(edges1[::, 0])
+    probs_c = get_probs(edges1[::, 1])
+    probs_r = get_probs(edges2[::, 1])
 
-ev.anneal()
+    ev = Evolutor(probs_l, probs_c, probs_r, edges1, edges2, 280)
+
+    ev.anneal()
