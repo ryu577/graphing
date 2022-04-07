@@ -85,7 +85,10 @@ def get_schedule(probs_left, probs_right, edges1, edges2, num_nodes=20):
         flowed = res_val
         if np.random.uniform() > 0.5:
             h = np.random.choice(left_max_ix) + 1
-            g[0][h]['capacity'] += 1
+            try:
+                g[0][h]['capacity'] += 1
+            except Exception:
+                print("Exception when linking source to " + str(h))
         else:
             v = np.random.choice(right_max_ix - center_max_ix - 1)\
                             + center_max_ix + 1

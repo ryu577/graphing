@@ -8,7 +8,8 @@ from graphing.special_graphs.neural_trigraph.path_set import\
     path_arr_to_flow_dict, add_one_path, add_path_dicts
 from graphing.special_graphs.neural_trigraph.marginal_matching.scoring\
     import score
-from collections import Counter
+from graphing.special_graphs.neural_trigraph.marginal_matching.residual_probs import\
+    get_residual_targets
 
 
 def even_probs(arr):
@@ -30,28 +31,6 @@ def prep_trigr_edges():
     edges1 += 1
     edges2 += 1
     return edges1, edges2
-
-
-def get_residual_targets(paths, probs_l, probs_c, probs_r, n):
-    xs_l = Counter(paths[::, 0])
-    xs_c = Counter(paths[::, 1])
-    xs_r = Counter(paths[::, 2])
-    qs_l = residual_probs(probs_l, xs_l, n)
-    qs_c = residual_probs(probs_c, xs_c, n)
-    qs_r = residual_probs(probs_r, xs_r, n)
-    return qs_l, qs_c, qs_r
-
-
-def residual_probs(ps, xs, n):
-    n2 = sum(list(xs.values()))
-    qs = {}
-    summ = 0
-    for k in ps.keys():
-        qs[k] = max((ps[k]*n - xs[k])/n2, 0)
-        summ += max((ps[k]*n - xs[k])/n2, 0)
-    for k in qs.keys():
-        qs[k] /= summ
-    return qs
 
 
 def tst():
@@ -84,7 +63,7 @@ def tst():
     # First create a random set of paths above coverage.
     flow_dict_init = copy.deepcopy(flow_dict_cov)
 
-    for ix in range(n-len(paths2)):
+    for _ in range(n-len(paths2)):
         flow_dict_init = add_one_path(flow_dict_init, edges1, edges2)
 
     ev1 = Evolutor(probs_l, probs_c, probs_r,
@@ -98,4 +77,3 @@ def tst():
     print("Score for first approach: " + str(scr1))
     print("####################")
     print("Score for second approach: " + str(scr2))
-
