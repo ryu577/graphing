@@ -3,18 +3,16 @@ Implements the Hungarian method algo defined
 in section 17.2 of Schrijver.
 """
 import networkx as nx
-import numpy as np
-
 
 ## How do we express a matching? Its a set of edges.
 class Matching():
-    def __init__(self,edges,wts,gr):
+    def __init__(self, edges, wts, gr):
         self.graph=gr
         self.mtch={}
         self.wt = 0
         for i in range(len(edges)):
             ed = edges[i]
-            self.mtch[(ed[0],ed[1])] = wts[i]
+            self.mtch[(ed[0], ed[1])] = wts[i]
             self.wt += wts[i]
         self.l_verts_covered = set()
         self.r_verts_covered = set()
@@ -87,7 +85,9 @@ def find_max_matchings(graph):
             return ms
         p_edges = set()
         for ix in range(1,len(pth)-2):
-            p_edges.add((pth[ix],pth[ix+1]))
+            minn = min(pth[ix],pth[ix+1])
+            maxx = max(pth[ix],pth[ix+1])
+            p_edges.add((minn,maxx))
         nu_edges = p_edges.symmetric_difference(m.mtch)
         nu_edges = [ed for ed in nu_edges]
         nu_wts = [graph.edge_dict[ed] for ed in nu_edges]
@@ -107,4 +107,10 @@ if __name__=="__main__":
     mtch = find_max_matchings(gr)
     ## The matching of largest size.
     print(mtch[len(mtch)-1].mtch)
+    edges = [[1,4],[2,5],[3,6],[1,5],[1,6]]
+    wts = [1,1,1,10,10]
+    gr = Graph(edges,wts)
+    mtch = find_max_matchings(gr)
+    for mm in mtch:
+        print(mm.mtch)
 
