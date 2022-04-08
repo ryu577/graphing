@@ -19,7 +19,7 @@ ukr_grph_ts = {
 		'staging-2': {'sumy': 1.4},
 		'sumy': {'kyiv': 4.5, 'kharkiv': 2.4},
 		'staging-3': {'kharkiv': 0.8},
-		'kharkiv': {'sumy': 1.9, 'okhtyrka': 1.5, 'poltova': 1.5, 'dnipro': 2.8, 'luhansk': 2.2},
+		'kharkiv': {'sumy': 1.9, 'okhtyrka': 1.5, 'poltava': 1.5, 'dnipro': 2.8, 'luhansk': 2.2},
 		'staging-4': {'luhansk': 0.4},
 		'staging-5': {'donetsk': 0.5},
 		'luhansk': {'kharkiv': 1.7, 'donetsk': 0.8},
@@ -29,5 +29,15 @@ ukr_grph_ts = {
 		'staging-6': {'melitopol': 0.1},
 		'staging-7': {'kherson': 0.3},
 		'kherson': {'mykolaiv': 1.0, 'melitopol': 1.3},
-		'mykolaiv': {'odesa': 1.3, 'kherson': 1.1, 'kryvi_rih': 0.9, 'kropyv': 0.85}
+		'mykolaiv': {'odesa': 1.3, 'kherson': 1.1, 'kryvi_rih': 0.9, 'kropyv': 0.85},
+		'poltava': {'lubny': 2, 'kremanchuk': 2.5, 'kharkiv': 2.2},
+		'lubny': {'pyryatyn': 1.4, 'poltava': 1.8},
+		'zhytomyr': {'vinnytsia': 2.1, 'irpin': 1.6},
+		'pyryatyn': {'okhtyrka': 1.7, 'kyiv': 2.8, 'lubny': 0.9},
+		'okhtyrka': {'pyryatyn': 2.1, 'kharkiv': 2.2},
+		'kryvi_rih': {'mykolaiv': 1.8, 'kropyv': 0.9, 'dnipro': 2.4},
+		'zaporizhzhia': {'dnipro': 0.8, 'donetsk': 2.1, 'berdyansk': 1.8, 'melitopol': 1.5},
+		'pavlohrad': {'dnipro': 2.1, 'pokrovsk': 0.8},
+		'pokrovsk': {'pavlohrad': 0.8, 'donetsk': 0.7},
+		'melitopol': {'berdyansk': 0.7, 'zaporizhzhia': 1.1, 'kherson': 2.3}
 		}
