@@ -3,10 +3,6 @@ Implements the Hungarian method algo defined
 in section 17.2 of Schrijver.
 """
 import networkx as nx
-<<<<<<< HEAD
-=======
-
->>>>>>> 5c270f50c7f4b336a4bfbe62145fafaac0950b47
 
 # How do we express a matching? Its a set of edges.
 class Matching():

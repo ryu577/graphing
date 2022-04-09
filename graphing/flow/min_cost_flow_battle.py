@@ -6,7 +6,7 @@ G = nx.DiGraph()
 
 for k in ukr_grph_ts.keys():
     for kk in ukr_grph_ts[k].keys():
-        G.add_edge(k, kk, weight=ukr_grph_ts[k][kk], capacity=5000)
+        G.add_edge(k, kk, weight=int(100*ukr_grph_ts[k][kk]), capacity=730)
 
 G.add_edge("s", 'staging-1', weight=0, capacity=np.inf)
 G.add_edge("s", 'staging-2', weight=0, capacity=np.inf)
@@ -34,6 +34,7 @@ for k in ukr_grph_ts.keys():
         i+=1
 
 from ortools.graph import pywrapgraph
+
 min_cost_flow = pywrapgraph.SimpleMinCostFlow()
 
 for k in ukr_grph_ts.keys():
