@@ -80,7 +80,7 @@ class NeuralTriGraph():
             v1 = "in_layer2_elem" + str(e)
             self.flow_graph.add_edge(v1,v2,capacity=1,weight=1)
 
-    def determine_layer(self,ind):
+    def determine_layer(self, ind):
         if ind < self.layer_1_size:
             return 0
         elif ind < self.layer_2_size:
@@ -88,7 +88,8 @@ class NeuralTriGraph():
         else:
             return 2
 
-def create_central_vert_dict(edges1,edges2):
+
+def create_central_vert_dict(edges1, edges2):
     vert_set = {}
     for e in edges1:
         if e[1] not in vert_set:
@@ -105,11 +106,21 @@ def create_central_vert_dict(edges1,edges2):
     return vert_set
 
 
+def is_valid_3_neural(edges1, edges2):
+    if min(edges2[::,1])-max(edges1[::,1])!=1:
+        return False
+    if min(edges1[::,1])-max(edges1[::,0])!=1:
+        return False
+    if min(edges2[::,1])-max(edges2[::,0])!=1:
+        return False
+    return True
+
+
 def tst1():
     ## Test case-1
     edges1 = np.array([[1,4],[2,4],[2,5],[3,5]])
     edges2 = np.array([[4,6],[4,7],[5,8]])
-    nu = NeuralTriGraph(edges1,edges2)
+    nu = NeuralTriGraph(edges1, edges2)
     nu.create_bipartite_graph()
     ##For debugging:
     [e for e in nu.flow_graph.edges]

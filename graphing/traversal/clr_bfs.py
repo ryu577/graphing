@@ -15,14 +15,14 @@ def bfs_minimal(g,s):
         u.color="black"
 
 
-######################
-## Test cases..
+#####################
+# Test cases..
 def tst():
-    edges=[[1,0],[0,3],[0,2],[3,2],[2,5],[4,5],[5,6],[2,4]]
-    num_verts=7
-    g=Graph().init_from_edge_list(num_verts,edges)
-    bfs_minimal(g,g.vertices[0])
+    edges = [[1,0], [0,3], [0,2], [3,2], [2,5], [4,5], [5,6], [2,4]]
+    num_verts = 7
+    g = Graph().init_from_edge_list(num_verts, edges)
+    bfs_minimal(g, g.vertices[0])
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     tst()
-

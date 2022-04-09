@@ -3,7 +3,7 @@ import numpy as np
 
 
 class Graph():
-    def __init__(self,vertices=None):
+    def __init__(self, vertices=None):
         ##We'll assume for now a staggered array.
         self.adj=[]
         self.vertices=vertices
@@ -30,4 +30,20 @@ class Node():
             self.key=val
         else:
             self.key=key
+
+
+def remove_zeros(res):
+    """
+    res is expected to be a dictionary of dictionaries
+    representing a flow graph.
+    """
+    res1 = {}
+    for k in res.keys():
+        res2 = {}
+        for kk in res[k].keys():
+            if res[k][kk] > 0:
+                res2[kk] = res[k][kk]
+        if len(res2) > 0:
+            res1[k] = res2
+    return res1
 
