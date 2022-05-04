@@ -68,6 +68,9 @@ def tst():
              ['a', 'e']]
     g1 = Graph(edges)
     g1.bfs_probs('s')
+    # This kind of graph is split neatly into layers
+    # like a networking topology graph would. So,
+    # one iteration of the bfs is enough.
     edges = [['s1', 'a'],
              ['s1', 'd'],
              ['a', 'b'],
