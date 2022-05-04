@@ -1,24 +1,9 @@
 import queue
 from collections import defaultdict
-import numpy as np
-
-
-class Node():
-    def __init__(self, val, nxt=None, color="white",
-                 pi=None, d=np.inf, key=None):
-        self.nxt = nxt
-        self.val = val
-        self.color = color
-        self.pi = pi
-        self.d = d
-        if key is None:
-            self.key = val
-        else:
-            self.key = key
 
 
 class Graph():
-    def __init__(self, edges):
+    def __init__(self, edges, excl_verts={}):
         self.white_verts = set()
         self.grey_verts = set()
         self.black_verts = set()
@@ -26,33 +11,53 @@ class Graph():
         # We'll need the reverse graph as well.
         self.adj_rev = defaultdict(dict)
         self.vert_wts = {}
+        self.edges = edges
         for ed in edges:
             vert_0 = ed[0]
             vert_1 = ed[1]
-            self.white_verts.add(vert_0)
-            self.white_verts.add(vert_1)
-            # Save graph as an adjacency list.
-            self.adj[vert_0][vert_1] = 0
-            # We need both the regular graph and reversed graph.
-            self.adj_rev[vert_1][vert_0] = 0
-            self.vert_wts[vert_0] = 0
-            self.vert_wts[vert_1] = 0
+            if vert_0 not in excl_verts and vert_1 not in excl_verts:
+                self.white_verts.add(vert_0)
+                self.white_verts.add(vert_1)
+                # Save graph as an adjacency list.
+                self.adj[vert_0][vert_1] = 0
+                # We need both the regular graph and reversed graph.
+                self.adj_rev[vert_1][vert_0] = 0
+                self.vert_wts[vert_0] = 0
+                self.vert_wts[vert_1] = 0
 
-    def bfs_probs(self, s):
+    def bfs_probs(self, s, rev=False):
         self.vert_wts[s] = 1
         self.grey_verts.add(s)
         q = queue.Queue()
         q.put(s)
+        if not rev:
+            e_lst = self.adj
+        else:
+            e_lst = self.adj_rev
         while q.qsize() > 0:
             u = q.get()
-            for v in self.adj[u]:
-                if v in self.white_verts:
+            for v in e_lst[u]:
+                if v in self.white_verts and v not in self.grey_verts\
+                 and v not in self.black_verts:
                     self.grey_verts.add(v)
                     q.put(v)
-                self.adj[u][v] += self.vert_wts[u]/len(self.adj[u])
-                self.vert_wts[v] += self.vert_wts[u]/len(self.adj[u])
+                e_lst[u][v] += self.vert_wts[u]/len(e_lst[u])
+                self.vert_wts[v] += self.vert_wts[u]/len(e_lst[u])
             self.vert_wts[u] = 0
             self.black_verts.add(u)
+
+
+def reachable_subgraph(edges, source='s1', dest='d1'):
+    g3 = Graph(edges)
+    # We don't care about the probabilities, just about BFS visits
+    g3.bfs_probs('s1')
+    g4 = Graph(edges)
+    # We don't care about the probabilities, just about BFS visits
+    g4.bfs_probs('d1', rev=True)
+    excl_verts = g3.vert_wts.keys() - \
+        g4.black_verts.intersection(g3.black_verts)
+    g5 = Graph(edges, excl_verts)
+    return g5
 
 
 def tst():
@@ -81,3 +86,25 @@ def tst():
              ['c', 'd1']]
     g2 = Graph(edges)
     g2.bfs_probs('s1')
+    print("Here is the graph with probabilities of the error populated.")
+    print(g2.adj)
+    # Now, how to get rid of edges irrelevant to the network topology.
+    edges = [['s1', 'a'],
+             ['s1', 'd'],
+             ['a', 'b'],
+             ['d', 'b'],
+             ['b', 'c'],
+             ['d', 'e'],
+             ['e', 'c'],
+             ['c', 'd1'],
+             ['s2', 'd'],
+             ['d', 'e'],
+             ['e', 'c'],
+             ['e', 'f'],
+             ['f', 'd2'],
+             ['s3', 'g'],
+             ['g', 'e'],
+             ['e', 'f'],
+             ['f', 'd2']]
+    g3 = reachable_subgraph(edges, 's1', 'd1')
+    g3.bfs_probs('s1')
