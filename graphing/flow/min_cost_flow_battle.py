@@ -6,7 +6,7 @@ G = nx.DiGraph()
 
 for k in ukr_grph_ts.keys():
     for kk in ukr_grph_ts[k].keys():
-        G.add_edge(k, kk, weight=ukr_grph_ts[k][kk], capacity=700)
+        G.add_edge(k, kk, weight=ukr_grph_ts[k][kk], capacity=900)
 
 G.add_edge("s", 'staging-1', weight=0, capacity=np.inf)
 G.add_edge("s", 'staging-2', weight=0, capacity=np.inf)
