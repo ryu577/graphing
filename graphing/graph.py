@@ -19,7 +19,7 @@ class Graph():
 
 
 class Node():
-    def __init__(self,val,next=None,color="white",\
+    def __init__(self,val,next=None,color="white",
                 pi=None,d=np.inf,key=None):
         self.next=next
         self.val=val

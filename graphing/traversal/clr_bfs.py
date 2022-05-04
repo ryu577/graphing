@@ -2,6 +2,7 @@ import numpy as np
 import queue
 from graphing.graph import Graph
 
+
 def bfs_minimal(g,s):
     s.color="grey"
     q=queue.Queue()
