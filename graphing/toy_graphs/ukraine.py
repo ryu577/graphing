@@ -132,7 +132,7 @@ for k in coord.keys():
         fill=(255, 0, 0, 150),
         outline=(0, 0, 0),
     )
-    font = ImageFont.truetype("arial.ttf", 20)
+    font = ImageFont.truetype("Arial.ttf", 20)
     draw.text((pt[0] + 2, pt[1] + 2), k, "orange", font=font)
 
 for k in ukr_grph_ts.keys():
@@ -141,7 +141,6 @@ for k in ukr_grph_ts.keys():
         pt2 = coord[kk]
         draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), (102, 255, 51, 120), width=2)
 
-#im.show()
 
 G = nx.DiGraph()
 
@@ -171,6 +170,6 @@ for k in flowDict.keys():
             if flowDict[k][kk]>0:
                 pt1 = coord[k]
                 pt2 = coord[kk]
-                draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), (255, 10, 51, 50), width=int(30/720*flowDict[k][kk]))
+                draw.line((pt1[0], pt1[1], pt2[0], pt2[1]), (255, 10, 51, 80), width=int(30/720*flowDict[k][kk]))
 
 im.show()
