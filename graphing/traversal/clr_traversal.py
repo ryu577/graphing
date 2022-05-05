@@ -39,6 +39,10 @@ class Graph1():
                 self.vert_props[vert_0] = Node(vert_0)
                 self.vert_props[vert_1] = Node(vert_1)
 
+    def print_vert_props(self):
+        for k in self.vert_props.keys():
+            print(str(self.vert_props[k].__dict__))
+
     def bfs(self, s):
         self.grey_verts.add(s)
         self.vert_props[s].d = 0
@@ -93,5 +97,7 @@ def tst2():
              ['f', 'd2']]
     g1 = Graph1(edges)
     g1.bfs('s1')
+    g1.print_vert_props()
     g2 = Graph1(edges)
     g2.dfs()
+    g2.print_vert_props()
