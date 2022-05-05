@@ -50,10 +50,10 @@ class Graph():
 def reachable_subgraph(edges, source='s1', dest='d1'):
     g3 = Graph(edges)
     # We don't care about the probabilities, just about BFS visits
-    g3.bfs_probs('s1')
+    g3.bfs_probs(source)
     g4 = Graph(edges)
     # We don't care about the probabilities, just about BFS visits
-    g4.bfs_probs('d1', rev=True)
+    g4.bfs_probs(dest, rev=True)
     excl_verts = g3.vert_wts.keys() - \
         g4.black_verts.intersection(g3.black_verts)
     g5 = Graph(edges, excl_verts)
