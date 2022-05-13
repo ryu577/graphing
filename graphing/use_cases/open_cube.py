@@ -9,34 +9,18 @@ for combo in combinations(lst, 3):
     print(combo)
 
 
-edges = [['-00','0+0'],#2
-		 ['-00','0-0'],#1
-		 ['-00','00-'],#5
-		 ['-00','00+'],
-		 ['0-0','00+'],
-		 ['0-0','00-'],
-		 ['0-0','+00'],
-		 ['0+0','00+'],
-		 ['0+0','00-'],
-		 ['0+0','+00'],
-		 ['+00','00+'],
-		 ['+00','00-']]
-
-
-
-class Node():
-    def __init__(self, val, nxt=None, color="white",
-                 pi=None, d=np.inf, f=np.inf, key=None):
-        self.nxt = nxt
-        self.val = val
-        self.color = color
-        self.pi = pi
-        self.d = d
-        self.f = f
-        if key is None:
-            self.key = val
-        else:
-            self.key = key
+edges = [['-00', '0+0'],  #2
+         ['-00', '0-0'],  #1
+         ['-00', '00-'],  #5
+         ['-00', '00+'],
+         ['0-0', '00+'],
+         ['0-0', '00-'],
+         ['0-0', '+00'],
+         ['0+0', '00+'],
+         ['0+0', '00-'],
+         ['0+0', '+00'],
+         ['+00', '00+'],
+         ['+00', '00-']]
 
 
 class Graph1():
@@ -60,3 +44,17 @@ class Graph1():
                 self.vert_props[vert_0] = Node(vert_0)
                 self.vert_props[vert_1] = Node(vert_1)
 
+
+class Node():
+    def __init__(self, val, nxt=None, color="white",
+                 pi=None, d=np.inf, f=np.inf, key=None):
+        self.nxt = nxt
+        self.val = val
+        self.color = color
+        self.pi = pi
+        self.d = d
+        self.f = f
+        if key is None:
+            self.key = val
+        else:
+            self.key = key
