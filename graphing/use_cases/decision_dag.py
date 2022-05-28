@@ -29,7 +29,7 @@ class SevNode(DAGNode):
 
 class DecisionDAG():
 	def __init__(self):
-		self.mapper = {'CmpDeny': RgxLstNode(), 'HasEsclTo': IfNode()}
+		self.mapper = {'CmpDeny': RgxLstNode(), 'HasEsclTo': IfNode(), 'CmpAllow': RgxLstNode()}
 		self.adj = defaultdict(list)
 		self.adj['CmpDeny'] = ['CmpAllow', 'SevDAG1']
 		self.adj['CmpAllow'] = ['GlblDeny', 'SevDAG2']
