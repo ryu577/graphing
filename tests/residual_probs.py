@@ -65,6 +65,7 @@ if __name__=="__main__":
     test_cases = [100, 200, 300]
     thrs = 1e-10
     for n in test_cases:
+        print(f'Number of nodes: {n}')
         qs_l1, qs_c1, qs_r1 = get_residual_targets(paths3, probs_l,
                                                 probs_c, probs_r, n)
         qs_l2, qs_c2, qs_r2 = get_residual_targets2(paths3, probs_l,
