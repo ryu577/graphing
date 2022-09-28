@@ -25,7 +25,6 @@ def get_residual_targets(paths, probs_l, probs_c, probs_r, n):
 
 # new code for calculating residual probabilities (without n2 term)
 def residual_probs2(ps, xs, n):
-    # n2 = sum(list(xs.values()))
     qs = {}
     summ = 0
     for k in ps.keys():

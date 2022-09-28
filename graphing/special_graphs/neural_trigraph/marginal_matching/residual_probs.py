@@ -12,12 +12,11 @@ def get_residual_targets(paths, probs_l, probs_c, probs_r, n):
 
 
 def residual_probs(ps, xs, n):
-    n2 = sum(list(xs.values()))
     qs = {}
     summ = 0
     for k in ps.keys():
-        qs[k] = max((ps[k]*n - xs[k])/n2, 0)
-        summ += max((ps[k]*n - xs[k])/n2, 0)
+        qs[k] = max((ps[k]*n - xs[k]), 0)
+        summ += max((ps[k]*n - xs[k]), 0)
     for k in qs.keys():
         qs[k] /= summ
     return qs
