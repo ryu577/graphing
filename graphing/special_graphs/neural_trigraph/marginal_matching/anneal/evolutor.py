@@ -87,7 +87,7 @@ class Evolutor(object):
                 self.curr_dict = copy.deepcopy(self.candidate_dict)
                 self.curr_score = self.candidate_score
                 b_ix = ix
-            elif prob_swtch < np.random.uniform():
+            elif prob_swtch > np.random.uniform():
                 self.curr_dict = copy.deepcopy(self.candidate_dict)
                 self.curr_score = self.candidate_score
             if (self.candidate_score - self.min_score)/self.min_score > 2.0\
