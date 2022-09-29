@@ -14,15 +14,15 @@ def score(flow_dict, probs_left, probs_center, probs_right):
             summ += probs_left[k]**2/len(probs_left)
     for k in probs_right.keys():
         if k in flow_dict:
-            summ += (probs_right[k] - flow_dict[k][dest]/total_flow)**2/len(probs_center)
+            summ += (probs_right[k] - flow_dict[k][dest]/total_flow)**2/len(probs_right)
         else:
-            summ += probs_right[k]**2/len(probs_center)
+            summ += probs_right[k]**2/len(probs_right)
     for k in probs_center.keys():
         if k in flow_dict:
             summ += (probs_center[k] -
-                     sum(flow_dict[k].values())/total_flow)**2/len(probs_right)
+                     sum(flow_dict[k].values())/total_flow)**2/len(probs_center)
         else:
-            summ += probs_center[k]**2/len(probs_right)
+            summ += probs_center[k]**2/len(probs_center)
     return summ
 
 
