@@ -28,7 +28,7 @@ def remove_one_path(path_graph, dest=None, preserv_cov=False):
     while not complete:
         ix += 1
         if ix == 100:
-            print(res)
+            print(res1)
             raise Exception("Looks like a near infinite loop.")
         res1 = copy.deepcopy(path_graph)
         # First, remove one path.
