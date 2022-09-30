@@ -175,6 +175,7 @@ if __name__=="__main__":
     paths = vert_set_to_paths(v_set)
     print(paths)
     paths2 = min_cover_trigraph(edges1,edges2)
-    paths3 = complete_paths(paths2)
     print(paths2)
+    paths3 = complete_paths(paths2, edges1, edges2)
+    print(paths3)
 
