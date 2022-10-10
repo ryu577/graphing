@@ -108,19 +108,25 @@ def simulated_annealing(edges1, edges2, complete_path_cover, num_nodes=300,
         num_nodes -= len(complete_path_cover)
 
     if sa_choice == 0: 
-        path_dict, _ = sim_anneal1(edges1, edges2, complete_path_cover, 
+        path_dict, scr = sim_anneal1(edges1, edges2, complete_path_cover, 
             num_nodes)
     elif sa_choice == 1: 
-        path_dict, _ = sim_anneal2(edges1, edges2, complete_path_cover, 
+        path_dict, scr = sim_anneal2(edges1, edges2, complete_path_cover, 
             num_nodes)
     else: 
         path_dict1, scr1 = sim_anneal1(edges1, edges2, complete_path_cover, 
             num_nodes)
         path_dict2, scr2 = sim_anneal2(edges1, edges2, complete_path_cover, 
             num_nodes)
+        # print('Score (first approach):', scr1, '\nScore (second approach):', 
+        #     scr2)
         if scr1 <= scr2: 
             path_dict = path_dict1
+            scr = scr1
+            # print('First simulated annealing approach is better')
         else: 
             path_dict = path_dict2
+            scr = scr2
+            # print('Second simulated annealing approach is better')
     path_counts = get_path_counts(path_dict)
-    return path_counts
+    return path_counts, scr
