@@ -19,8 +19,22 @@ for i in range(len(TEST_CASES)):
         num_nodes, sa_choice)
     print(path_counts)
     try: 
+        # check for coverage 
+        vertices = set()
+        for edges in [edges1, edges2]:
+            for v1, v2 in edges: 
+                vertices.add(v1)
+                vertices.add(v2) 
+        covered = set() 
+        for path in path_counts.keys(): 
+            for v in path: 
+                covered.add(v)
+        assert len(vertices) == len(covered)
+        
+        # check all VMs are used 
         assert (sum(path_counts.values()) + len(complete_path_cover) 
             == num_nodes)
+        
         PASSES.append(i + 1)
     except: 
         FAILS.append(i + 1)

@@ -64,7 +64,6 @@ def _get_paths_from_dict(path_dict, dfs_stack, path_counts):
 
     if max(path_dict.keys()) + 1 in neighbors: 
         path = tuple(dfs_stack[1:])
-        # determine min_val 
         min_val = float('inf')
         for i in range(len(path) - 1):
             min_val = min(min_val, path_dict[path[i]][path[i+1]])
