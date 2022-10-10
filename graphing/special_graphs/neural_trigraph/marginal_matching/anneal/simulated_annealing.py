@@ -91,6 +91,12 @@ def get_path_counts(path_dict):
 
 def simulated_annealing(edges1, edges2, complete_path_cover, num_nodes=300,
     sa_choice=0):
+    '''
+    sa_choice
+    0: first approach (coverage constraint met first, then simulated annealing)
+    1: second approach (simulated annealing with checking for coverage)
+    else: best (lower score) of the previous two approaches
+    '''
     if type(edges1) != np.ndarray: 
         edges1 = np.array(edges1)
     if type(edges2) != np.ndarray: 
