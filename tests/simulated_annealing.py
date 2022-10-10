@@ -8,16 +8,18 @@ TEST_CASES = [
     ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
         [3, 5, 8]], 300, 0),
     ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
-        [3, 5, 8]], 300, 1)
+        [3, 5, 8]], 300, 1),
+    ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
+        [3, 5, 8]], 300, 2),
 ]
 
 PASSES = []
 FAILS = []
 for i in range(len(TEST_CASES)):
     edges1, edges2, complete_path_cover, num_nodes, sa_choice = TEST_CASES[i]
-    path_counts = simulated_annealing(edges1, edges2, complete_path_cover, 
+    path_counts, scr = simulated_annealing(edges1, edges2, complete_path_cover, 
         num_nodes, sa_choice)
-    print(path_counts)
+    print('Path Counts:', path_counts, '\nScore:', scr)
     try: 
         # check for coverage 
         vertices = set()
