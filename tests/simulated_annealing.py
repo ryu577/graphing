@@ -1,0 +1,28 @@
+import numpy as np
+from graphing.special_graphs.neural_trigraph.marginal_matching.anneal\
+    .simulated_annealing import simulated_annealing
+
+TEST_CASES = [
+    # edges1, edges2, complete_path_cover, number of nodes, simulated annealing 
+    # choice (0: first approach, 1: second approach, else best of 0 and 1)
+    ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
+        [3, 5, 8]], 300, 0),
+    ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
+        [3, 5, 8]], 300, 1)
+]
+
+PASSES = []
+FAILS = []
+for i in range(len(TEST_CASES)):
+    edges1, edges2, complete_path_cover, num_nodes, sa_choice = TEST_CASES[i]
+    path_counts = simulated_annealing(edges1, edges2, complete_path_cover, 
+        num_nodes, sa_choice)
+    print(path_counts)
+    try: 
+        assert (sum(path_counts.values()) + len(complete_path_cover) 
+            == num_nodes)
+        PASSES.append(i + 1)
+    except: 
+        FAILS.append(i + 1)
+print('Passed: ', len(PASSES), '-', PASSES)
+print('Failed: ', len(FAILS), '-', FAILS)
