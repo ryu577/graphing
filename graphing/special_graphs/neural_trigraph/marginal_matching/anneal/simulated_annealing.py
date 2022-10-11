@@ -104,9 +104,6 @@ def simulated_annealing(edges1, edges2, complete_path_cover, num_nodes=300,
     if type(complete_path_cover) != np.ndarray:  
         complete_path_cover = np.array(complete_path_cover)
 
-    if num_nodes - len(complete_path_cover) > 0:
-        num_nodes -= len(complete_path_cover)
-
     if sa_choice == 0: 
         path_dict, scr = sim_anneal1(edges1, edges2, complete_path_cover, 
             num_nodes)
