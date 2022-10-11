@@ -16,6 +16,7 @@ TEST_CASES = [
 PASSES = []
 FAILS = []
 for i in range(len(TEST_CASES)):
+    print('TEST CASE', i+1)
     edges1, edges2, complete_path_cover, num_nodes, sa_choice = TEST_CASES[i]
     path_counts, scr = simulated_annealing(edges1, edges2, complete_path_cover, 
         num_nodes, sa_choice)
@@ -34,8 +35,7 @@ for i in range(len(TEST_CASES)):
         assert len(vertices) == len(covered)
         
         # check all VMs are used 
-        assert (sum(path_counts.values()) + len(complete_path_cover) 
-            == num_nodes)
+        assert sum(path_counts.values()) == num_nodes
         
         PASSES.append(i + 1)
     except: 
