@@ -20,9 +20,9 @@ class NeuralTriGraphCentralVert():
         r_size = len(self.r_edges)
         self.l_counts = np.ones(l_size)
         self.r_counts = np.ones(r_size)
-        if l_size > r_size:
+        if l_size > r_size and r_size != 0:
             self.r_counts = distr_evenly(l_size, r_size)
-        elif l_size < r_size:
+        elif l_size < r_size and l_size != 0:
             self.l_counts = distr_evenly(r_size, l_size)
 
 
@@ -34,3 +34,14 @@ def distr_evenly(n, le):
     h_arr = np.ones(h)*ceil
     j_arr = np.ones(j)*flr
     return np.concatenate((h_arr, j_arr))
+
+if __name__=='__main__':
+    # check if divide by zero error is encountered or not 
+    try: 
+        v = NeuralTriGraphCentralVert((1, 2))
+        v.edge_counts() # should not throw zero division error because r_size = 0
+    except ZeroDivisionError: 
+        print('ZeroDivisionError occurred - FAILED')
+    print('No ZeroDivisionError occurred - PASSED')
+
+
