@@ -23,7 +23,7 @@ def _get_other_sim_anneal_args(edges1, edges2, complete_path_cover):
     probs_r = even_probs(edges2[::, 1])
     return flow_dict_cov, probs_l, probs_c, probs_r
 
-def sim_anneal1(edges1, edges2, complete_path_cover, num_nodes):
+def _sim_anneal1(edges1, edges2, complete_path_cover, num_nodes):
     '''
     Simulated annealing with first satisfying coverage constraint with path 
     cover.
@@ -40,7 +40,7 @@ def sim_anneal1(edges1, edges2, complete_path_cover, num_nodes):
     scr = score(final_pths, probs_l, probs_c, probs_r)
     return final_pths, scr
 
-def sim_anneal2(edges1, edges2, complete_path_cover, num_nodes):
+def _sim_anneal2(edges1, edges2, complete_path_cover, num_nodes):
     '''
     Simulated annealing without first satisfying coverage constraint with path
     cover. 
@@ -105,15 +105,15 @@ def simulated_annealing(edges1, edges2, complete_path_cover, num_nodes=300,
         complete_path_cover = np.array(complete_path_cover)
 
     if sa_choice == 0: 
-        path_dict, scr = sim_anneal1(edges1, edges2, complete_path_cover, 
+        path_dict, scr = _sim_anneal1(edges1, edges2, complete_path_cover, 
             num_nodes)
     elif sa_choice == 1: 
-        path_dict, scr = sim_anneal2(edges1, edges2, complete_path_cover, 
+        path_dict, scr = _sim_anneal2(edges1, edges2, complete_path_cover, 
             num_nodes)
     else: 
-        path_dict1, scr1 = sim_anneal1(edges1, edges2, complete_path_cover, 
+        path_dict1, scr1 = _sim_anneal1(edges1, edges2, complete_path_cover, 
             num_nodes)
-        path_dict2, scr2 = sim_anneal2(edges1, edges2, complete_path_cover, 
+        path_dict2, scr2 = _sim_anneal2(edges1, edges2, complete_path_cover, 
             num_nodes)
         # print('Score (first approach):', scr1, '\nScore (second approach):', 
         #     scr2)
