@@ -24,32 +24,32 @@ def _get_other_sim_anneal_args(edges1, edges2, complete_path_cover):
     return flow_dict_cov, probs_l, probs_c, probs_r
 
 def _sim_anneal1(edges1, edges2, complete_path_cover, flow_dict_cov, probs_l, 
-    probs_c, probs_r, n):
+    probs_c, probs_r, num_paths):
     '''
     Coverage constraint met with path cover, simulated annealing 
     done for remaining paths
     '''
     qs_l, qs_c, qs_r = get_residual_targets(complete_path_cover, probs_l,
-                                            probs_c, probs_r, n)
+                                            probs_c, probs_r, num_paths)
     ev = Evolutor(qs_l, qs_c, qs_r,
                   edges1, edges2,
-                  n-len(complete_path_cover))
+                  num_paths-len(complete_path_cover))
     ev.anneal(presv_cov=False, n_iter=5000)
     final_pths = add_path_dicts(ev.best_dict, flow_dict_cov)
     scr = score(final_pths, probs_l, probs_c, probs_r)
     return final_pths, scr
 
 def _sim_anneal2(edges1, edges2, complete_path_cover, flow_dict_cov, probs_l, 
-    probs_c, probs_r, n):
+    probs_c, probs_r, num_paths):
     '''
     Coverage constraint met with path cover + more paths, simulated annealing 
     done for all paths 
     '''
     flow_dict_init = copy.deepcopy(flow_dict_cov)
-    for _ in range(n-len(complete_path_cover)):
+    for _ in range(num_paths-len(complete_path_cover)):
         flow_dict_init = add_one_path(flow_dict_init, edges1, edges2)
     ev1 = Evolutor(probs_l, probs_c, probs_r,
-                   edges1, edges2, n,
+                   edges1, edges2, num_paths,
                    start_dict=flow_dict_init)
     ev1.anneal(presv_cov=True, n_iter=5000)
     final_pths = ev1.best_dict
@@ -88,7 +88,7 @@ def get_path_counts(path_dict):
     return path_counts 
 
 def simulated_annealing(edges1, edges2, complete_path_cover, probs_l, probs_c, probs_r, 
-    n=300, sa_choice=0):
+    num_paths=300, sa_choice=0):
     '''
     sa_choice
     0: first approach (coverage constraint met with path cover, simulated annealing on 
@@ -115,15 +115,15 @@ def simulated_annealing(edges1, edges2, complete_path_cover, probs_l, probs_c, p
 
     if sa_choice == 0: 
         path_dict, scr = _sim_anneal1(edges1, edges2, complete_path_cover, 
-            flow_dict_cov, probs_l, probs_c, probs_r, n)
+            flow_dict_cov, probs_l, probs_c, probs_r, num_paths)
     elif sa_choice == 1: 
         path_dict, scr = _sim_anneal2(edges1, edges2, complete_path_cover, 
-            flow_dict_cov, probs_l, probs_c, probs_r, n)
+            flow_dict_cov, probs_l, probs_c, probs_r, num_paths)
     else: 
         path_dict1, scr1 = _sim_anneal1(edges1, edges2, complete_path_cover, 
-            flow_dict_cov, probs_l, probs_c, probs_r, n)
+            flow_dict_cov, probs_l, probs_c, probs_r, num_paths)
         path_dict2, scr2 = _sim_anneal2(edges1, edges2, complete_path_cover, 
-            flow_dict_cov, probs_l, probs_c, probs_r, n)
+            flow_dict_cov, probs_l, probs_c, probs_r, num_paths)
         if scr1 <= scr2: 
             path_dict = path_dict1
             scr = scr1

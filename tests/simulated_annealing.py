@@ -2,8 +2,9 @@ from graphing.special_graphs.neural_trigraph.marginal_matching.anneal\
     .simulated_annealing import simulated_annealing
 
 TEST_CASES = [
-    # edges1, edges2, complete_path_cover, probs_l, probs_c, probs_r, number of paths, 
-    # simulated annealing choice (0: first approach, 1: second approach, else best of 0 and 1)
+    # edges1, edges2, complete_path_cover, probs_l, probs_c, probs_r, num_paths, 
+    # sa_choice (0: first simulated annealing approach, 1: second simulated annealing 
+    # approach, else best of 0 and 1)
     ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
         [3, 5, 8]], None, None, None, 300, 0),
     ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
@@ -17,9 +18,9 @@ FAILS = []
 for i in range(len(TEST_CASES)):
     print('TEST CASE', i+1)
     (edges1, edges2, complete_path_cover, probs_l, probs_c, probs_r, 
-        num_nodes, sa_choice) = TEST_CASES[i]
+        num_paths, sa_choice) = TEST_CASES[i]
     path_counts, scr = simulated_annealing(edges1, edges2, complete_path_cover, 
-        probs_l, probs_c, probs_r, num_nodes, sa_choice)
+        probs_l, probs_c, probs_r, num_paths, sa_choice)
     print('Path Counts:', path_counts, '\nScore:', scr)
     try: 
         # check for coverage 
@@ -35,7 +36,7 @@ for i in range(len(TEST_CASES)):
         assert len(vertices) == len(covered)
         
         # check all VMs are used 
-        assert sum(path_counts.values()) == num_nodes
+        assert sum(path_counts.values()) == num_paths
         
         PASSES.append(i + 1)
     except: 
