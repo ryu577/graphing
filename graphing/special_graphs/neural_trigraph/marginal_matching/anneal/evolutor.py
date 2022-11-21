@@ -76,6 +76,8 @@ class Evolutor(object):
         prob_swtch = 1.0
         anneal_rate = 0.99
         b_ix = 0
+        score_diff_threshold = 2.0 
+        best_score_iters_threshold = 225
         for ix in range(n_iter):
             print("Current score: " + str(self.curr_score) +\
                   " best score: " + str(self.min_score))
@@ -88,11 +90,11 @@ class Evolutor(object):
                 self.curr_score = self.candidate_score
                 b_ix = ix
             elif prob_swtch > np.random.uniform():
-                self.curr_dict = copy.deepcopy(self.candidate_dict)
+                self.curr_dict = copy.deepcopy(self.candidate_dict) 
                 self.curr_score = self.candidate_score
-            if (self.candidate_score - self.min_score)/self.min_score > 2.0\
-                    and (ix-b_ix)>225:
-                self.reset_to_best()
+            if (self.candidate_score - self.min_score) > score_diff_threshold * self.min_score\
+                    and (ix-b_ix)>best_score_iters_threshold:
+                self.reset_to_best() 
 
     def perturb_probs(self):
         probs = self.probs_arr[self.pert_ix % 3]
