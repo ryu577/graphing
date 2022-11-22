@@ -23,35 +23,33 @@ def _get_other_sim_anneal_args(edges1, edges2, complete_path_cover):
     probs_r = even_probs(edges2[::, 1])
     return flow_dict_cov, probs_l, probs_c, probs_r
 
-def _sim_anneal1(edges1, edges2, complete_path_cover, num_nodes):
+def _sim_anneal1(edges1, edges2, complete_path_cover, flow_dict_cov, probs_l, 
+    probs_c, probs_r, num_paths):
     '''
-    Simulated annealing with first satisfying coverage constraint with path 
-    cover.
+    Coverage constraint met with path cover, simulated annealing 
+    done for remaining paths
     '''
-    flow_dict_cov, probs_l, probs_c, probs_r = _get_other_sim_anneal_args(
-        edges1, edges2, complete_path_cover)
     qs_l, qs_c, qs_r = get_residual_targets(complete_path_cover, probs_l,
-                                            probs_c, probs_r, num_nodes)
+                                            probs_c, probs_r, num_paths)
     ev = Evolutor(qs_l, qs_c, qs_r,
                   edges1, edges2,
-                  num_nodes-len(complete_path_cover))
+                  num_paths-len(complete_path_cover))
     ev.anneal(presv_cov=False, n_iter=5000)
     final_pths = add_path_dicts(ev.best_dict, flow_dict_cov)
     scr = score(final_pths, probs_l, probs_c, probs_r)
     return final_pths, scr
 
-def _sim_anneal2(edges1, edges2, complete_path_cover, num_nodes):
+def _sim_anneal2(edges1, edges2, complete_path_cover, flow_dict_cov, probs_l, 
+    probs_c, probs_r, num_paths):
     '''
-    Simulated annealing without first satisfying coverage constraint with path
-    cover. 
+    Coverage constraint met with path cover + more paths, simulated annealing 
+    done for all paths 
     '''
-    flow_dict_cov, probs_l, probs_c, probs_r = _get_other_sim_anneal_args(
-        edges1, edges2, complete_path_cover)
     flow_dict_init = copy.deepcopy(flow_dict_cov)
-    for _ in range(num_nodes-len(complete_path_cover)):
+    for _ in range(num_paths-len(complete_path_cover)):
         flow_dict_init = add_one_path(flow_dict_init, edges1, edges2)
     ev1 = Evolutor(probs_l, probs_c, probs_r,
-                   edges1, edges2, num_nodes,
+                   edges1, edges2, num_paths,
                    start_dict=flow_dict_init)
     ev1.anneal(presv_cov=True, n_iter=5000)
     final_pths = ev1.best_dict
@@ -89,12 +87,14 @@ def get_path_counts(path_dict):
     dfs_stack.pop()
     return path_counts 
 
-def simulated_annealing(edges1, edges2, complete_path_cover, num_nodes=300,
-    sa_choice=0):
+def simulated_annealing(edges1, edges2, complete_path_cover, probs_l, probs_c, probs_r, 
+    num_paths=300, sa_choice=0):
     '''
     sa_choice
-    0: first approach (coverage constraint met first, then simulated annealing)
-    1: second approach (simulated annealing with checking for coverage)
+    0: first approach (coverage constraint met with path cover, simulated annealing on 
+    remaining paths)
+    1: second approach (coverage constraint met with path cover + more paths, simulated 
+    annealing on all paths)
     else: best (lower score) of the previous two approaches
     '''
     if type(edges1) != np.ndarray: 
@@ -103,27 +103,32 @@ def simulated_annealing(edges1, edges2, complete_path_cover, num_nodes=300,
         edges2 = np.array(edges2)
     if type(complete_path_cover) != np.ndarray:  
         complete_path_cover = np.array(complete_path_cover)
+    
+    flow_dict_cov, probs_l1, probs_c1, probs_r1 = _get_other_sim_anneal_args(
+        edges1, edges2, complete_path_cover)
+    if probs_l is None: 
+        probs_l = probs_l1
+    if probs_c is None: 
+        probs_c = probs_c1 
+    if probs_r is None: 
+        probs_r = probs_r1
 
     if sa_choice == 0: 
         path_dict, scr = _sim_anneal1(edges1, edges2, complete_path_cover, 
-            num_nodes)
+            flow_dict_cov, probs_l, probs_c, probs_r, num_paths)
     elif sa_choice == 1: 
         path_dict, scr = _sim_anneal2(edges1, edges2, complete_path_cover, 
-            num_nodes)
+            flow_dict_cov, probs_l, probs_c, probs_r, num_paths)
     else: 
         path_dict1, scr1 = _sim_anneal1(edges1, edges2, complete_path_cover, 
-            num_nodes)
+            flow_dict_cov, probs_l, probs_c, probs_r, num_paths)
         path_dict2, scr2 = _sim_anneal2(edges1, edges2, complete_path_cover, 
-            num_nodes)
-        # print('Score (first approach):', scr1, '\nScore (second approach):', 
-        #     scr2)
+            flow_dict_cov, probs_l, probs_c, probs_r, num_paths)
         if scr1 <= scr2: 
             path_dict = path_dict1
             scr = scr1
-            # print('First simulated annealing approach is better')
         else: 
             path_dict = path_dict2
             scr = scr2
-            # print('Second simulated annealing approach is better')
     path_counts = get_path_counts(path_dict)
     return path_counts, scr
