@@ -1,4 +1,3 @@
-from turtle import st
 from graphing.special_graphs.neural_trigraph.marginal_matching.\
     marginal_matching1 import get_schedule, get_schedule_rand
 from graphing.special_graphs.neural_trigraph.marginal_matching.scoring\
