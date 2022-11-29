@@ -33,13 +33,18 @@ for i in range(len(TEST_CASES)):
         for path in path_counts.keys(): 
             for v in path: 
                 covered.add(v)
-        assert len(vertices) == len(covered), 'Not all vertices covered'
+        assert vertices == covered, f'Test case {i+1}: Not all '\
+            + 'vertices covered. Uncovered vertices: '\
+            + f'{vertices.difference(covered)}'
         
         # check all paths are used 
-        assert sum(path_counts.values()) == num_paths, 'Not all paths were used'
+        assert sum(path_counts.values()) == num_paths, f'Test case {i+1}: '\
+            + f'Not all paths were used. Expected: {num_paths}, Actual: '\
+            + f'{sum(path_counts.values())}'
 
         # check that score is less than threshold 
-        assert scr <= scr_threshold, 'Score was not below threshold'
+        assert scr <= scr_threshold, f'Test case {i+1}: Score ({scr}) was '\
+            + f'not below threshold ({scr_threshold})'
         
         PASSES.append(i + 1)
     except Exception as e: 
