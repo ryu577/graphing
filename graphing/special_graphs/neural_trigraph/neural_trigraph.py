@@ -2,6 +2,7 @@ import numpy as np
 import networkx as nx
 from networkx.algorithms.flow import maximum_flow
 from graphing.special_graphs.neural_trigraph.central_vert import NeuralTriGraphCentralVert
+from graphing.traversal.clr_traversal import Graph1
 import re
 import random
 import collections
@@ -19,6 +20,9 @@ class NeuralTriGraph():
     def __init__(self, left_edges, right_edges):
         self.left_edges = left_edges
         self.right_edges = right_edges
+        edges = unify_edges(left_edges, right_edges)
+        self.max_ix = np.max(edges)
+        self.g1 = Graph1(edges)
         self.vertices = set(left_edges.flatten())\
                     .union(set(right_edges.flatten()))
         self.layer_1 = set(left_edges[:,0])
@@ -114,6 +118,18 @@ def is_valid_3_neural(edges1, edges2):
     if min(edges2[::,1])-max(edges2[::,0])!=1:
         return False
     return True
+
+
+def unify_edges(edges1, edges2):
+    edges = []
+    for e in edges1:
+        edges.append(e)
+
+    for e in edges2:
+        edges.append(e)
+
+    edges = np.array(edges)
+    return edges
 
 
 def tst1():

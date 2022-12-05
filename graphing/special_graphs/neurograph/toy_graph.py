@@ -1,3 +1,4 @@
+from graphing.graph import Graph, Node
 
 
 class NeuralGraphVert():
@@ -59,3 +60,6 @@ class ToyGraphs():
         g[7] = [v10, v11]
 
         return g
+
+
+

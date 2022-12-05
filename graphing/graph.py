@@ -2,6 +2,8 @@ from collections import defaultdict
 import numpy as np
 
 
+## The graph is clr_traversal is superior to this and
+# should be used instead of this for most purposes.
 class Graph():
     def __init__(self, vertices=None):
         ##We'll assume for now a staggered array.
@@ -11,10 +13,14 @@ class Graph():
     def init_from_edge_list(self,num_verts,edges):
         self.vertices = [Node(i) for i in range(num_verts)]
         self.adj = defaultdict(list)
+        self.adj_lst = defaultdict(list)
+        self.edges = edges
+        self.num_verts = num_verts
         for ed in edges:
             vert_0 = self.vertices[ed[0]]
             vert_1 = self.vertices[ed[1]]
             self.adj[vert_0].append(vert_1)
+            self.adj_lst[ed[0]].append(ed[1])
         return self
 
 
