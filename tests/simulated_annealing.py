@@ -6,11 +6,12 @@ TEST_CASES = [
     # sa_choice (0: first simulated annealing approach, 1: second simulated annealing 
     # approach, else best of 0 and 1), scr_threshold 
     ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
-        [3, 5, 8]], None, None, None, 300, 0, 0.05),
+        [3, 5, 8]], None, None, None, 300, 0, 0.1),
     ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
-        [3, 5, 8]], None, None, None, 300, 1, 0.05),
+        [3, 5, 8]], {1: 1/4, 2: 2/4, 3: 1/4}, {4: 2/3, 5: 1/3}, 
+        {6: 3/8, 7: 3/8, 8: 2/8}, 300, 1, 0.1),
     ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
-        [3, 5, 8]], None, None, None, 300, 2, 0.05),
+        [3, 5, 8]], None, {4: 5/9, 5: 4/9}, None, 300, 2, 0.1),
 ]
 
 PASSES = []
@@ -33,13 +34,18 @@ for i in range(len(TEST_CASES)):
         for path in path_counts.keys(): 
             for v in path: 
                 covered.add(v)
-        assert len(vertices) == len(covered), 'Not all vertices covered'
+        assert vertices == covered, f'Test case {i+1}: Not all '\
+            + 'vertices covered. Uncovered vertices: '\
+            + f'{vertices.difference(covered)}'
         
         # check all paths are used 
-        assert sum(path_counts.values()) == num_paths, 'Not all paths were used'
+        assert sum(path_counts.values()) == num_paths, f'Test case {i+1}: '\
+            + f'Not all paths were used. Expected: {num_paths}, Actual: '\
+            + f'{sum(path_counts.values())}'
 
         # check that score is less than threshold 
-        assert scr <= scr_threshold, 'Score was not below threshold'
+        assert scr <= scr_threshold, f'Test case {i+1}: Score ({scr}) was '\
+            + f'not below threshold ({scr_threshold})'
         
         PASSES.append(i + 1)
     except Exception as e: 
