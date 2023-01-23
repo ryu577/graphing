@@ -1,5 +1,64 @@
 from collections import defaultdict
+import queue
 import numpy as np
+
+
+class Node1():
+    def __init__(self, key="a", color="w"):
+        self.color = color
+        self.key = key
+
+    def __hash__(self):
+        return self.key
+
+    def __eq__(self, other):
+        return self.key == other.key
+
+    def __neq__(self, other):
+        return self.key != other.key
+
+    def __str__(self):
+        return str(self.key)
+
+
+## Under construction, doesn't work as expected.
+def dfs(g):
+  for u in g.keys():
+    if u.color == "w":
+      dfs_visit(u, g)
+
+
+def dfs_visit(u, g):
+  u.color = "gr"
+  for v in g[u]:
+    if v.color == "w":
+      dfs_visit(v, g)
+  u.color = "bl"
+
+
+def bfs(g, s):
+  s.color = "gr"
+  q = queue.Queue()
+  q.put(s)
+  while q.qsize() > 0:
+    u = q.get()
+    for v in g[u]:
+      if v.color == "w":
+        v.color = "gr"
+        v.d = u.d + 1
+        q.put(v)
+    u.color = "bl"
+
+
+def tst1():
+    edges = [[1,2],[1,3],[1,4], [2,4]]
+    g = defaultdict(list)
+    for ed in edges:
+        vert_0 = Node1(ed[0])
+        vert_1 = Node1(ed[1])
+        g[vert_0].append(vert_1)
+    return g
+
 
 
 ## The graph is clr_traversal is superior to this and

@@ -46,6 +46,13 @@ class NeuralTriGraph():
         self.central_vert_dict = create_central_vert_dict(left_edges,\
                                                         right_edges)
 
+    def __eq__(self, other):
+        return self.left_edges == other.left_edges
+            and self.right_edges == other.right_edges
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def create_bipartite_graph(self):
         self.flow_graph = nx.DiGraph()
         for ed in self.left_edges:
