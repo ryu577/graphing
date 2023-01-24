@@ -4,9 +4,10 @@ import numpy as np
 
 
 class Node1():
-    def __init__(self, key="a", color="w"):
+    def __init__(self, key="a", color="w", d=0):
         self.color = color
         self.key = key
+        self.d = d
 
     def __hash__(self):
         return self.key
@@ -51,23 +52,28 @@ def bfs(g, s):
 
 
 def tst1():
-    edges = [[1,2],[1,3],[1,4], [2,4]]
+    edges = [[1, 2], [1, 3], [1, 4], [2, 4]]
+    verts = set()
     g = defaultdict(list)
     for ed in edges:
         vert_0 = Node1(ed[0])
         vert_1 = Node1(ed[1])
         g[vert_0].append(vert_1)
+        verts.add(vert_0)
+        verts.add(vert_1)
+    for v in verts:
+        if v not in g:
+            g[v] = []
     return g
 
 
-
-## The graph is clr_traversal is superior to this and
+# The graph is clr_traversal is superior to this and
 # should be used instead of this for most purposes.
 class Graph():
     def __init__(self, vertices=None):
         ##We'll assume for now a staggered array.
-        self.adj=[]
-        self.vertices=vertices
+        self.adj = []
+        self.vertices = vertices
 
     def init_from_edge_list(self,num_verts,edges):
         self.vertices = [Node(i) for i in range(num_verts)]

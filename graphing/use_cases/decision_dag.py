@@ -97,9 +97,9 @@ class DecisionDAG():
 # you would have to append the exclusion ^(?!.*xyzf)" in both places.
 def tst_walk():
 	deny_lst = [".*a1", ".*n1"]
-	deny_prms = [(.01,1,4), (.01,1,4)]
+	deny_prms = [(.01, 1, 4), (.01, 1, 4)]
 	allow_lst = [".*xyz.*xxx"]
-	allow_prms = [(.01,1,4)]
+	allow_prms = [(.01, 1, 4)]
 	mapper = {
 				'CmpDeny': RgxLstNode(deny_lst, deny_prms, 'CmpDeny'),
 				'CmpAllow': RgxLstNode(allow_lst, allow_prms, 'CmpAllow'),
@@ -161,7 +161,7 @@ def tst_plot():
 
 
 def tst_plot1():
-	g = tst()
+	g = tst_plot()
 	net = Network(directed =True)
 	ix_2_key = {0: 'CmpDeny', 1: 'CmpAllow', 2: 'SevDAG1',
 				3: 'GlblDeny', 4: 'SevDAG2',

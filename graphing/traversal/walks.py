@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def polygon_paths(n=3,s=1,h=5):
     omeg = cmath.exp((2 * cmath.pi * 1j) / n)
-    sum1=0
+    sum1 = 0
     for j in range(0,n):
         sum1+=omeg**(-j*(h+s))*(1+omeg**(2*j))**h
     return int(sum1.real/n)

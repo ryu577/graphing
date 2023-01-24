@@ -60,5 +60,3 @@ def tst():
     for i in range(n_verts+1,n_verts+1+l_verts):
         flow_graph.add_edge(i,2*n_verts+1,capacity=1,\
                 weight=1)
-
-

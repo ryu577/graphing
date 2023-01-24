@@ -47,7 +47,7 @@ class NeuralTriGraph():
                                                         right_edges)
 
     def __eq__(self, other):
-        return self.left_edges == other.left_edges
+        return self.left_edges == other.left_edges\
             and self.right_edges == other.right_edges
 
     def __ne__(self, other):
