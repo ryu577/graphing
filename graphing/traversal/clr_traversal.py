@@ -1,103 +1,143 @@
 import numpy as np
 import queue
 from collections import defaultdict
+from graphing.graph import Node
 
 
-class Node():
-    def __init__(self, val, nxt=None, color="white",
-                 pi=None, d=np.inf, f=np.inf, key=None):
-        self.nxt = nxt
-        self.val = val
-        self.color = color
-        self.pi = pi
-        self.d = d
-        self.f = f
-        if key is None:
-            self.key = val
+def dfs(g):
+  for u in g.keys():
+    if u.color == "wh":
+      dfs_visit(g, u)
+
+
+def dfs_visit(g, u):
+  u.color = "gr"
+  for v in g[u]:
+    if v.color == "wh":
+      dfs_visit(g, v)
+  u.color = "bl"
+
+
+def bfs(g, s):
+  s.color = "gr"
+  q = queue.Queue()
+  q.put(s)
+  while q.qsize() > 0:
+    u = q.get()
+    for v in g[u]:
+      if v.color == "wh":
+        v.color = "gr"
+        v.d = u.d + 1
+        q.put(v)
+    u.color = "bl"
+    print(u.key)
+
+
+def dfs_it(g, u):
+    u.color="gr"
+    st=[u]
+    while len(st)>0:
+        u=st[len(st)-1]
+        ## Are there any white children remaining?
+        remains=False
+        for v in g.adj[u]:
+            if v.color=="wh":
+                remains=True
+                v.color="gr"
+                st.append(v)
+                # Exit the for loop to ensure
+                # depth is prioritized. 
+                break
+        ## Nothing remains; let's remove this vertex.
+        if not remains:
+            st.pop()
+            u.color="bl"
+
+
+def create_graph(edges=[[1, 2], [1, 3], [1, 4], [2, 4]]):
+    # For a given key, we need to make sure there is only
+    # one object for it. If there are two objects
+    # with the same key, changing the properties of one
+    # won't change the properties of the other.
+    verts = {}
+    g = defaultdict(list)
+    for ed in edges:
+        if ed[0] in verts.keys():
+            vert_0 = verts[ed[0]]
         else:
-            self.key = key
+            vert_0 = Node(ed[0])
+            verts[ed[0]] = vert_0
+        if ed[1] in verts.keys():
+            vert_1 = verts[ed[1]]
+        else:
+            vert_1 = Node(ed[1])
+            verts[ed[1]] = vert_1
+        g[vert_0].append(vert_1)
+    for v in verts:
+        n1 = Node(v)
+        if n1 not in g:
+            g[n1] = []
+    return g, verts
 
 
-class Graph1():
-    def __init__(self, edges, excl_verts={}):
-        self.white_verts = set()
-        self.grey_verts = set()
-        self.black_verts = set()
-        self.adj = defaultdict(dict)
-        # We'll need the reverse graph as well.
-        self.vert_props = {}
-        self.edges = edges
-        self.time = 0
-        for ed in edges:
-            vert_0 = ed[0]
-            vert_1 = ed[1]
-            if vert_0 not in excl_verts and vert_1 not in excl_verts:
-                self.white_verts.add(vert_0)
-                self.white_verts.add(vert_1)
-                # Save graph as an adjacency list.
-                self.adj[vert_0][vert_1] = 0
-                self.vert_props[vert_0] = Node(vert_0)
-                self.vert_props[vert_1] = Node(vert_1)
-
-    def print_vert_props(self):
-        for k in self.vert_props.keys():
-            print(str(self.vert_props[k].__dict__))
-
-    def bfs(self, s):
-        self.grey_verts.add(s)
-        self.vert_props[s].d = 0
-        q = queue.Queue()
-        q.put(s)
-        while q.qsize() > 0:
-            u = q.get()
-            for v in self.adj[u]:
-                if v in self.white_verts and v not in self.grey_verts\
-                 and v not in self.black_verts:
-                    self.grey_verts.add(v)
-                    self.vert_props[v].d = self.vert_props[u].d + 1
-                    self.vert_props[v].pi = u
-                    q.put(v)
-            self.black_verts.add(u)
-
-    def dfs(self):
-        for u in self.vert_props.keys():
-            if self.vert_props[u].color == "white":
-                self.dfs_visit(u)
-
-    def dfs_visit(self, u):
-        self.time += 1
-        self.vert_props[u].d = self.time
-        self.vert_props[u].color = "grey"
-        for v in self.adj[u]:
-            if self.vert_props[v].color == "white":
-                self.vert_props[v].pi = u
-                self.dfs_visit(v)
-        self.vert_props[u].color = "black"
-        self.time += 1
-        self.vert_props[u].f = self.time
+def toy_graph1():
+    """
+    This graph is taken from figure 22.4
+    of "Introduction to Algorithms" by Cormen.
+    """
+    edges = [['u', 'v'],
+             ['u', 'x'],
+             ['v', 'y'],
+             ['x', 'v'],
+             ['y', 'x'],
+             ['w', 'y'],
+             ['w', 'z'],
+             ['z', 'z']
+             ]
+    # Add a print(u) at the very end of
+    # dfs_visit.
+    return create_graph(edges)
 
 
-def tst2():
-    edges = [['s1', 'a'],
-             ['s1', 'd'],
-             ['a', 'b'],
-             ['d', 'b'],
-             ['b', 'c'],
-             ['d', 'e'],
-             ['e', 'c'],
-             ['c', 'd1'],
-             ['s2', 'd'],
-             ['d', 'e'],
-             ['e', 'c'],
-             ['e', 'f'],
-             ['f', 'd2'],
-             ['s3', 'g'],
-             ['g', 'e'],
-             ['e', 'f'],
-             ['f', 'd2']]
-    g1 = Graph1(edges)
-    g1.bfs('s1')
-    g1.print_vert_props()
-    g2 = Graph1(edges)
-    g2.dfs()
-    g2.print_vert_props()
+def toy_graph2():
+    """
+    This graph is taken from figure 22.3
+    of "Introduction to Algorithms" by Cormen.
+    Used to demonstrate BFS.
+    """
+    edges = [['r','s'],
+             ['s','r'],
+             ['r','v'],
+             ['v','r'],
+             ['s','w'],
+             ['w','s'],
+             ['w','t'],
+             ['t','w'],
+             ['t','x'],
+             ['x','t'],
+             ['t','u'],
+             ['u','t'],
+             ['u','x'],
+             ['x','u'],
+             ['u','y'],
+             ['y','u'],
+             ['x','y'],
+             ['y','x']]
+    return create_graph(edges)
+
+
+def tst1():
+    g, verts = toy_graph1()
+    print("Before DFS everything is white")
+    for v in verts.keys():
+        print(verts[v].color)
+    dfs(g)
+    print("After DFS everything should be black")
+    for v in verts.keys():
+        print(verts[v].color)
+    g, verts = toy_graph1()
+    bfs(g, verts['u'])
+    print("After BFS everything should be black")
+    for v in verts.keys():
+        print(verts[v].color)
+

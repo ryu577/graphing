@@ -2,7 +2,7 @@ import numpy as np
 import networkx as nx
 from networkx.algorithms.flow import maximum_flow
 from graphing.special_graphs.neural_trigraph.central_vert import NeuralTriGraphCentralVert
-from graphing.traversal.clr_traversal import Graph1
+from graphing.graph import Graph
 import re
 import random
 import collections
@@ -22,7 +22,7 @@ class NeuralTriGraph():
         self.right_edges = right_edges
         edges = unify_edges(left_edges, right_edges)
         self.max_ix = np.max(edges)
-        self.g1 = Graph1(edges)
+        self.g1 = Graph(edges)
         self.vertices = set(left_edges.flatten())\
                     .union(set(right_edges.flatten()))
         self.layer_1 = set(left_edges[:,0])

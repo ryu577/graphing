@@ -3,14 +3,22 @@ import queue
 import numpy as np
 
 
-class Node1():
-    def __init__(self, key="a", color="w", d=0):
+class Node():
+    def __init__(self, key="a", val="a", nxt=None, color="wh",
+                 pi=None, d=np.inf, f=np.inf):
+        self.nxt = nxt
+        self.val = val
         self.color = color
-        self.key = key
+        self.pi = pi
         self.d = d
+        self.f = f
+        if key is None:
+            self.key = val
+        else:
+            self.key = key
 
     def __hash__(self):
-        return self.key
+        return hash(self.key)
 
     def __eq__(self, other):
         return self.key == other.key
@@ -22,85 +30,63 @@ class Node1():
         return str(self.key)
 
 
-## Under construction, doesn't work as expected.
-def dfs(g):
-  for u in g.keys():
-    if u.color == "w":
-      dfs_visit(u, g)
-
-
-def dfs_visit(u, g):
-  u.color = "gr"
-  for v in g[u]:
-    if v.color == "w":
-      dfs_visit(v, g)
-  u.color = "bl"
-
-
-def bfs(g, s):
-  s.color = "gr"
-  q = queue.Queue()
-  q.put(s)
-  while q.qsize() > 0:
-    u = q.get()
-    for v in g[u]:
-      if v.color == "w":
-        v.color = "gr"
-        v.d = u.d + 1
-        q.put(v)
-    u.color = "bl"
-
-
-def tst1():
-    edges = [[1, 2], [1, 3], [1, 4], [2, 4]]
-    verts = set()
-    g = defaultdict(list)
-    for ed in edges:
-        vert_0 = Node1(ed[0])
-        vert_1 = Node1(ed[1])
-        g[vert_0].append(vert_1)
-        verts.add(vert_0)
-        verts.add(vert_1)
-    for v in verts:
-        if v not in g:
-            g[v] = []
-    return g
-
-
-# The graph is clr_traversal is superior to this and
-# should be used instead of this for most purposes.
 class Graph():
-    def __init__(self, vertices=None):
-        ##We'll assume for now a staggered array.
-        self.adj = []
-        self.vertices = vertices
-
-    def init_from_edge_list(self,num_verts,edges):
-        self.vertices = [Node(i) for i in range(num_verts)]
-        self.adj = defaultdict(list)
-        self.adj_lst = defaultdict(list)
+    def __init__(self, edges, excl_verts={}):
+        self.white_verts = set()
+        self.grey_verts = set()
+        self.black_verts = set()
+        self.adj = defaultdict(dict)
+        # We'll need the reverse graph as well.
+        self.vert_props = {}
         self.edges = edges
-        self.num_verts = num_verts
+        self.time = 0
         for ed in edges:
-            vert_0 = self.vertices[ed[0]]
-            vert_1 = self.vertices[ed[1]]
-            self.adj[vert_0].append(vert_1)
-            self.adj_lst[ed[0]].append(ed[1])
-        return self
+            vert_0 = ed[0]
+            vert_1 = ed[1]
+            if vert_0 not in excl_verts and vert_1 not in excl_verts:
+                self.white_verts.add(vert_0)
+                self.white_verts.add(vert_1)
+                # Save graph as an adjacency list.
+                self.adj[vert_0][vert_1] = 0
+                self.vert_props[vert_0] = Node(vert_0)
+                self.vert_props[vert_1] = Node(vert_1)
 
+    def print_vert_props(self):
+        for k in self.vert_props.keys():
+            print(str(self.vert_props[k].__dict__))
 
-class Node():
-    def __init__(self,val,next=None,color="white",
-                pi=None,d=np.inf,key=None):
-        self.next=next
-        self.val=val
-        self.color=color
-        self.pi=pi
-        self.d=d
-        if key is None:
-            self.key=val
-        else:
-            self.key=key
+    def bfs(self, s):
+        self.grey_verts.add(s)
+        self.vert_props[s].d = 0
+        q = queue.Queue()
+        q.put(s)
+        while q.qsize() > 0:
+            u = q.get()
+            for v in self.adj[u]:
+                if v in self.white_verts and v not in self.grey_verts\
+                 and v not in self.black_verts:
+                    self.grey_verts.add(v)
+                    self.vert_props[v].d = self.vert_props[u].d + 1
+                    self.vert_props[v].pi = u
+                    q.put(v)
+            self.black_verts.add(u)
+
+    def dfs(self):
+        for u in self.vert_props.keys():
+            if self.vert_props[u].color == "wh":
+                self.dfs_visit(u)
+
+    def dfs_visit(self, u):
+        self.time += 1
+        self.vert_props[u].d = self.time
+        self.vert_props[u].color = "gr"
+        for v in self.adj[u]:
+            if self.vert_props[v].color == "wh":
+                self.vert_props[v].pi = u
+                self.dfs_visit(v)
+        self.vert_props[u].color = "bl"
+        self.time += 1
+        self.vert_props[u].f = self.time
 
 
 def remove_zeros(res):
@@ -118,3 +104,28 @@ def remove_zeros(res):
             res1[k] = res2
     return res1
 
+
+def tst2():
+    edges = [['s1', 'a'],
+             ['s1', 'd'],
+             ['a', 'b'],
+             ['d', 'b'],
+             ['b', 'c'],
+             ['d', 'e'],
+             ['e', 'c'],
+             ['c', 'd1'],
+             ['s2', 'd'],
+             ['d', 'e'],
+             ['e', 'c'],
+             ['e', 'f'],
+             ['f', 'd2'],
+             ['s3', 'g'],
+             ['g', 'e'],
+             ['e', 'f'],
+             ['f', 'd2']]
+    g1 = Graph(edges)
+    g1.bfs('s1')
+    g1.print_vert_props()
+    g2 = Graph(edges)
+    g2.dfs()
+    g2.print_vert_props()
