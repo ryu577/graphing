@@ -12,6 +12,11 @@ TEST_CASES = [
         {6: 3/8, 7: 3/8, 8: 2/8}, 300, 1, 0.1),
     ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
         [3, 5, 8]], None, {4: 5/9, 5: 4/9}, None, 300, 2, 0.1),
+    # num_paths is less than length of path cover for below test cases
+    ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
+        [3, 5, 8]], None, {4: 5/9, 5: 4/9}, None, 2, 2, 0.1),
+    ([[1,4],[2,4],[2,5],[3,5]], [[4,6],[4,7],[5,8]], [[1, 4, 7], [2, 4, 6], 
+        [3, 5, 8]], None, {4: 5/9, 5: 4/9}, None, 3, 2, 0.1),
 ]
 
 PASSES = []
@@ -38,18 +43,24 @@ for i in range(len(TEST_CASES)):
             + 'vertices covered. Uncovered vertices: '\
             + f'{vertices.difference(covered)}'
         
-        # check all paths are used 
-        assert sum(path_counts.values()) == num_paths, f'Test case {i+1}: '\
-            + f'Not all paths were used. Expected: {num_paths}, Actual: '\
-            + f'{sum(path_counts.values())}'
+        # check all paths are used
+        if num_paths > len(complete_path_cover):
+            assert sum(path_counts.values()) == num_paths, f'Test case {i+1}: '\
+                + f'Not all paths were used. Expected: {num_paths}, Actual: '\
+                + f'{sum(path_counts.values())}'
+        else:
+            assert sum(path_counts.values()) == len(complete_path_cover),\
+                f'Test case {i+1}: Path cover was not preserved. '\
+                + f'Expected: {num_paths}, Actual: {sum(path_counts.values())}'
 
-        # check that score is less than threshold 
-        assert scr <= scr_threshold, f'Test case {i+1}: Score ({scr}) was '\
-            + f'not below threshold ({scr_threshold})'
+        # check that score is less than threshold
+        if num_paths > len(complete_path_cover): 
+            assert scr <= scr_threshold, f'Test case {i+1}: Score ({scr})'\
+                + f' was not below threshold ({scr_threshold})'
         
         PASSES.append(i + 1)
     except Exception as e: 
-        FAILS.append(i + 1)
+        FAILS.append((i + 1, repr(e)))
         print('Test case failed: ', e)
 print('Passed: ', len(PASSES), '-', PASSES)
 print('Failed: ', len(FAILS), '-', FAILS)
