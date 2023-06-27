@@ -113,6 +113,17 @@ def simulated_annealing(edges1, edges2, complete_path_cover, probs_l, probs_c, p
     if probs_r is None: 
         probs_r = probs_r1
 
+    # see if path cover meets/exceed number of paths
+    if num_paths <= len(complete_path_cover):
+        print(f'Length of path cover ({len(complete_path_cover)}) is equal to/'
+              + f'greater than number of paths ({num_paths}), skipping '
+              + 'simulated annealing')
+        final_pths = flow_dict_cov
+        scr = score(final_pths, probs_l, probs_c, probs_r)
+        path_counts = get_path_counts(final_pths)
+        return path_counts, scr
+
+    # perform simulated annealing
     if sa_choice == 0: 
         path_dict, scr = _sim_anneal1(edges1, edges2, complete_path_cover, 
             flow_dict_cov, probs_l, probs_c, probs_r, num_paths)
