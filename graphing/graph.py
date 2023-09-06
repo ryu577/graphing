@@ -50,6 +50,53 @@ class Graph():
                 self.adj[vert_0][vert_1] = 0
                 self.vert_props[vert_0] = Node(vert_0)
                 self.vert_props[vert_1] = Node(vert_1)
+    
+    def remove_vertices(self, vertices):
+        remove_set = set(vertices)
+        
+        # remove edges from edge set
+        self.edges = type(self.edges)(filter(
+            lambda e: e[0] not in remove_set and e[1] not in remove_set,
+            self.edges))
+
+        # remove edges from adjacency list
+        verts = set(self.adj.keys())
+        for v1 in verts:
+            if v1 in remove_set:
+                self.adj.pop(v1)
+            else:
+                adj_verts = set(self.adj[v1].keys())
+                for v2 in adj_verts:
+                    if v2 in remove_set:
+                        self.adj[v1].pop(v2)
+        
+        # remove vertices from vertex properties
+        for vert in remove_set:
+            self.vert_props.pop(vert)
+
+    def add_edges(self, edges):
+        # add edges to edge set
+        if type(self.edges) is list:
+            self.edges += list(edges)
+        elif type(self.edges) is set:
+            self.edges = self.edges.union(set(edges))
+        elif type(self.edges) is tuple:
+            self.edges = tuple(list(self.edges) + list(edges))
+        else:
+            raise Exception('Invalid type for provided edges. Expected: '
+                            + f'list, set, or tuple. Actual: {type(edges)}')
+
+        # add edges to adjacency list, add vertex properties, and add vertices
+        # to set of white vertices
+        for ed in edges:
+            vert_0 = ed[0]
+            vert_1 = ed[1]
+            self.white_verts.add(vert_0)
+            self.white_verts.add(vert_1)
+            # Save graph as an adjacency list.
+            self.adj[vert_0][vert_1] = 0
+            self.vert_props[vert_0] = Node(vert_0)
+            self.vert_props[vert_1] = Node(vert_1)
 
     def print_vert_props(self):
         for k in self.vert_props.keys():
