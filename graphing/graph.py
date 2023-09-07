@@ -74,6 +74,11 @@ class Graph():
         for vert in remove_set:
             self.vert_props.pop(vert)
 
+        # remove vertices from sets of white, grey and black vertices
+        self.white_verts.difference_update(remove_set)
+        self.grey_verts.difference_update(remove_set)
+        self.black_verts.difference_update(remove_set)
+
     def add_edges(self, edges):
         # add edges to edge set
         if type(self.edges) is list:
