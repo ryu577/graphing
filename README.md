@@ -1,10 +1,20 @@
 # graphing
 
-To install the library on your local machine, clone it and run from the base directory:
+This Python library provides several graphing-related utilities that can be used to apply graph theory concepts and graph algorithms to a variety of problems.
 
-> python setup.py install
+## Getting Started
+This library is available for use on PyPI here: [https://pypi.org/project/graphing/](https://pypi.org/project/graphing/)
 
-Then, try to run the following sample code:
+For local development, do the following. 
+- Clone this repository.
+- Set up and activate a Python3 virtual environment using `conda`. More info here: [https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands)
+- Navigate to the `graphing` repo.
+- Run the command: `python3 setup.py install` to install the package in the conda virtual environment. 
+- As development progresses, run the above command to update the build in the conda virtual environment.
+
+## Sample Code
+
+Try to run the following sample code:
 
 > from graphing.special_graphs.neural_trigraph.path_cover import min_cover_trigraph
 > 

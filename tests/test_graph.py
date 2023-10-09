@@ -1,6 +1,7 @@
 from graphing.graph import Graph, Node
 from copy import deepcopy
 
+
 def test_graph_constructor():
     # test case: (edge set, expected adjacency list, expected vertex props)
     TEST_CASES = [
@@ -20,7 +21,6 @@ def test_graph_constructor():
             + f'{exp_adj}. Actual: {graph.adj}'
         assert graph.vert_props == exp_vert_props, 'Incorrect vertex props. '\
             + f'Expected: {exp_vert_props}, Actual: {graph.vert_props}'
-    print('Graph constructor test passed')
 
 
 def test_add_edges():
@@ -36,7 +36,6 @@ def test_add_edges():
         graph.add_edges(edges_to_add)
         assert graph.edges == exp_edges, 'Incorrect set of edges. Expected: '\
             + f'{exp_edges}. Actual: {graph.edges}'
-    print('Add edges test passed')
 
 
 def test_remove_vertices():
@@ -61,10 +60,3 @@ def test_remove_vertices():
             + f'Expected: {exp_adj_list}. Actual: {graph.adj}'
         assert graph.vert_props == exp_vert_props, 'Incorrect vertex props. '\
             + f'Expected: {exp_vert_props}, Actual: {graph.vert_props}'
-    print('Remove vertices test passed')
-
-
-if __name__ == '__main__':
-    test_graph_constructor()
-    test_add_edges()
-    test_remove_vertices()

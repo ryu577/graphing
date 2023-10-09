@@ -44,6 +44,7 @@ def get_residual_targets2(paths, probs_l, probs_c, probs_r, n):
     return qs_l, qs_c, qs_r
 
 if __name__=="__main__":
+
     def even_probs(arr):
         st = set(arr)
         probs_l = {}
