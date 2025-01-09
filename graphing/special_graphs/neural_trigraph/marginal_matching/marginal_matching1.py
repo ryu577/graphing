@@ -53,7 +53,8 @@ def get_schedule_rand(edges1, edges2, num_nodes=20):
     return res_dict
 
 
-def get_schedule(probs_left, probs_right, edges1, edges2, num_nodes=20):
+def get_schedule(probs_left, probs_right, edges1, edges2, num_nodes=20,
+                 allow_less_nodes=False):
     source = 0
     dest = np.max(edges2)+1
     # print("destination: " + str(dest))
@@ -83,6 +84,9 @@ def get_schedule(probs_left, probs_right, edges1, edges2, num_nodes=20):
         # res_dict = nx.max_flow_min_cost(g, source, dest)
         res_val, res_dict = nx.maximum_flow(g, source, dest)
         flowed = res_val
+        if flowed < num_nodes and allow_less_nodes:
+            return res_dict
+
         if np.random.uniform() > 0.5:
             h = np.random.choice(left_max_ix) + 1
             try:
@@ -164,6 +168,8 @@ def create_schedule(res, edges1, edges2):
     vms2, os2, cnts2 = flow_dict_to_arrs(res, min_vm_ix, max_vm_ix)
     df1 = pd.DataFrame({"hw": hws1, "vm": vms1, "counts": cnts1})
     df2 = pd.DataFrame({"vm": vms2, "os": os2, "counts": cnts2})
+    if len(df1) == 0 or len(df2) == 0:
+        return pd.DataFrame({"hw": [], "vm": [], "os": [], "nodes": []})
 
     df1 = df1.sort_values(by='vm')
     df2 = df2.sort_values(by='vm')
@@ -209,9 +215,17 @@ def tst():
     return df
 
 
-def three_layer_schedule(probs_left, probs_right, edges1, edges2, num_nodes):
-    res = get_schedule(probs_left, probs_right, edges1, edges2, num_nodes)
+def three_layer_schedule(probs_left, probs_right, edges1, edges2, num_nodes,
+                         allow_less_nodes=False, duplicate=False):
+    res = get_schedule(probs_left, probs_right, edges1, edges2, num_nodes,
+                       allow_less_nodes)
     df = create_schedule(res, edges1, edges2)
+    if len(df) != 0 and duplicate and num_nodes > df["nodes"].sum():
+        new_num_nodes = list(df["nodes"])
+        for _ in range(num_nodes - df["nodes"].sum()):
+            idx = np.random.choice(len(new_num_nodes))
+            new_num_nodes[idx] += 1
+        df["nodes"] = new_num_nodes
     return df
 
 
